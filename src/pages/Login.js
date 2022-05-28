@@ -32,12 +32,12 @@ export default function Login() {
     async function handleLogin(e) {
 
         try {
-            setError('')
             setLoading(true)
             await login(emailRef.current.value, passwordRef.current.value)
             navigate("/")
         } catch {
             setError('Failed to login')
+            console.log(error)
         }
         setLoading(false)
     }

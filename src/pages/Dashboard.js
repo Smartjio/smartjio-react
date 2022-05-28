@@ -23,6 +23,7 @@ export default function Dashboard() {
             navigate('/login')
         } catch {
             setError('Failed to log out')
+            console.log(error)
         }
     }
 
