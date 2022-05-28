@@ -25,9 +25,8 @@ export default function Signup() {
     const [showPassword, setShowPassword] = useState(false);
 
     const [error, setError] = useState('')
-    const [loading, setLoading] = useState(false)
 
-    const { signup } = useAuth()
+    const { signup, loading } = useAuth()
     const navigate = useNavigate()
 
     async function handleSubmit(e) {
@@ -36,17 +35,16 @@ export default function Signup() {
         if (passwordRef.current.value !== passwordConfirmationRef.current.value) {
             console.log(passwordRef.current.value)
             console.log(passwordConfirmationRef.current.value)
-            return setError('Passwords do not match')
+            setError('Passwords do not match')
+            return error
         }
         try {
-            setError('')
-            setLoading(true)
             await signup(emailRef.current.value, passwordRef.current.value)
             navigate("/login")
         } catch {
             setError('Failed to create an account')
+            console.log(error)
         }
-        setLoading(false)
     }
 
     return (
