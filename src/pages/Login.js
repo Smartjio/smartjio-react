@@ -24,22 +24,19 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
 
     const [error, setError] = useState('')
-    const [loading, setLoading] = useState(false)
 
-    const { login } = useAuth()
+    const { login, loading } = useAuth()
     const navigate = useNavigate()
 
     async function handleLogin(e) {
 
         try {
-            setLoading(true)
             await login(emailRef.current.value, passwordRef.current.value)
             navigate("/")
         } catch {
             setError('Failed to login')
             console.log(error)
         }
-        setLoading(false)
     }
 
     return (
