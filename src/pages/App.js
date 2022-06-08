@@ -5,6 +5,7 @@ import PrivateOutlet from'../components/PrivateOutlet';
 import Dashboard from './Dashboard';
 import Signup from "./Signup"
 import Login from "./Login"
+import ProfileCreation from './ProfileCreation';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route element={<PrivateOutlet />}>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/create" element={<ProfileCreation />} />
         </Route>
       </Routes>
     </AuthProvider>
