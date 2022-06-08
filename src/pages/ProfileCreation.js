@@ -24,10 +24,10 @@ import {
 
 export default function ProfileCreation() {
     const { currentUser } = useAuth();
-    const uid = currentUser.uid;
 
     const [username, setUsername] = useState("")
     const [location, setLocation] = useState("")
+    const [level, setLevel] = useState("")
     const [introduction, setIntroduction] = useState("")
 
     const [error, setError] = useState('')
@@ -36,6 +36,7 @@ export default function ProfileCreation() {
     const data = {
         username: username,
         location: location,
+        level: level,
         introduction: introduction
     }
 
@@ -43,9 +44,14 @@ export default function ProfileCreation() {
     //console.log(data)
 
     const createUser = async () => {
+        if (username === "" || location === "" || introduction === "" || level === "") {
+            setError('Please fill in all inputs')
+            console.log(error)
+            return error
+        } 
         try {
-            await setDoc(doc(db, "users", uid), data);
-        navigate("/")
+            await setDoc(doc(db, "users", currentUser.uid), data);
+            navigate("/")
         } catch {
             setError("Failed to create profile")
             console.log(error)
@@ -112,6 +118,17 @@ export default function ProfileCreation() {
             <option value='east'>East</option>
             <option value='west'>West</option>
             <option value='central'>Central</option>
+        </Select>
+        </FormControl>
+        <FormControl id="level" isRequired>
+        <FormLabel>Level</FormLabel>
+        <Select 
+            placeholder='Select level' 
+            onChange={(event) => {
+                setLevel(event.target.value);}}>
+            <option value='beginner'>Beginner</option>
+            <option value='intermediate'>Intermediate</option>
+            <option value='expert'>Expert</option>
         </Select>
         </FormControl>
         <FormControl id="email" isRequired>
