@@ -48,7 +48,7 @@ export default function ProfileCreation() {
 
     //console.log(uid)
     //console.log(data)
-    console.log(img)
+    //console.log(img)
 
     useEffect(() => {
         const uploadImg = () => {
@@ -122,7 +122,7 @@ export default function ProfileCreation() {
         <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
         Create Your Profile
         </Heading>
-        <FormControl id="userName">
+        <FormControl id="icon">
         <FormLabel>Profile Icon</FormLabel>
         <Stack direction={['column', 'row']} spacing={6}>
             <Center>
@@ -182,7 +182,7 @@ export default function ProfileCreation() {
             <option value='expert'>Expert</option>
         </Select>
         </FormControl>
-        <FormControl id="email" isRequired>
+        <FormControl id="introduction" isRequired>
         <FormLabel>Introduction</FormLabel>
             <Textarea
             maxLength={50}
