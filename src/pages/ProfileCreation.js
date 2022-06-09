@@ -6,6 +6,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useNavigate } from 'react-router-dom';
 
 import {
+    Box,
     Button,
     Flex,
     FormControl,
@@ -20,6 +21,7 @@ import {
     AvatarBadge,
     IconButton,
     Center,
+    InputGroup,
   } from '@chakra-ui/react';
   import { SmallCloseIcon } from '@chakra-ui/icons';
 
@@ -46,6 +48,7 @@ export default function ProfileCreation() {
 
     //console.log(uid)
     //console.log(data)
+    console.log(img)
 
     useEffect(() => {
         const uploadImg = () => {
@@ -123,21 +126,25 @@ export default function ProfileCreation() {
         <FormLabel>Profile Icon</FormLabel>
         <Stack direction={['column', 'row']} spacing={6}>
             <Center>
-                <Avatar size="xl" src={
+                <Avatar 
+                size="xl"
+                src={
                     img
                     ? URL.createObjectURL(img)
                     : null} />
             </Center>
             <Center w="full">
-                <Input 
-                    type='file' 
-                    onChange={(e) => setImg(e.target.files[0])} />
-                <Button 
-                    w="full"
-                    onClick={(event) => {
-                        setImg(event.target.files);
-                    }}
-                    >Change Icon</Button>
+            <FormControl>
+                <Button w="full">
+                    <FormLabel w="full" m={0}><Center>Change Icon</Center></FormLabel>
+                    <Input 
+                        w="full"
+                        type='file' 
+                        onChange={(e) => setImg(e.target.files[0])} 
+                        style={{ display: "none"}}
+                        />
+                </Button>
+            </FormControl>
             </Center>
         </Stack>
         </FormControl>
