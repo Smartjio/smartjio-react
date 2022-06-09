@@ -129,8 +129,8 @@ export default function ProfileCreation() {
                 <Avatar 
                 size="xl"
                 src={
-                    img
-                    ? URL.createObjectURL(img)
+                    url
+                    ? url
                     : null} />
             </Center>
             <Center w="full">
