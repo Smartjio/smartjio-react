@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext'
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import { doc, setDoc } from "firebase/firestore";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -9,10 +10,10 @@ import {
     Flex,
     FormControl,
     FormLabel,
+    Input,
     Select,
     Textarea,
     Heading,
-    Input,
     Stack,
     useColorModeValue,
     Avatar,
@@ -25,6 +26,8 @@ import {
 export default function ProfileCreation() {
     const { currentUser } = useAuth();
 
+    const [url, setUrl] = useState("")
+    const [img, setImg] = useState("")
     const [username, setUsername] = useState("")
     const [location, setLocation] = useState("")
     const [level, setLevel] = useState("")
@@ -34,6 +37,7 @@ export default function ProfileCreation() {
     const navigate = useNavigate()
 
     const data = {
+        img: url,
         username: username,
         location: location,
         level: level,
@@ -42,6 +46,45 @@ export default function ProfileCreation() {
 
     //console.log(uid)
     //console.log(data)
+
+    useEffect(() => {
+        const uploadImg = () => {
+            const name = new Date().getTime() + img.name;
+    
+            console.log(name);
+            const storageRef = ref(storage, `images/${name}`);
+            const uploadTask = uploadBytesResumable(storageRef, img);
+    
+            uploadTask.on(
+                "state_changed",
+                (snapshot) => {
+                const progress =
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log("Upload is " + progress + "% done");
+                switch (snapshot.state) {
+                    case "paused":
+                    console.log("Upload is paused");
+                    break;
+                    case "running":
+                    console.log("Upload is running");
+                    break;
+                    default:
+                    break;
+                }
+                },
+                (error) => {
+                console.log(error);
+                },
+                () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    console.log('File available at', downloadURL);
+                    setUrl(downloadURL);
+                });
+                }
+            );
+        };
+        img && uploadImg();
+      }, [img]);
 
     const createUser = async () => {
         if (username === "" || location === "" || introduction === "" || level === "") {
@@ -80,20 +123,21 @@ export default function ProfileCreation() {
         <FormLabel>Profile Icon</FormLabel>
         <Stack direction={['column', 'row']} spacing={6}>
             <Center>
-            <Avatar size="xl" src='https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg'>
-                <AvatarBadge
-                as={IconButton}
-                size="sm"
-                rounded="full"
-                top="-10px"
-                colorScheme="red"
-                aria-label="remove Image"
-                icon={<SmallCloseIcon />}
-                />
-            </Avatar>
+                <Avatar size="xl" src={
+                    img
+                    ? URL.createObjectURL(img)
+                    : null} />
             </Center>
             <Center w="full">
-            <Button w="full">Change Icon</Button>
+                <Input 
+                    type='file' 
+                    onChange={(e) => setImg(e.target.files[0])} />
+                <Button 
+                    w="full"
+                    onClick={(event) => {
+                        setImg(event.target.files);
+                    }}
+                    >Change Icon</Button>
             </Center>
         </Stack>
         </FormControl>
