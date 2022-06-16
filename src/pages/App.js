@@ -14,6 +14,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route element={<PrivateOutlet />}>
+          {/* signup goes to create and login goes to slash */}
+          {/* possible that user skips create by closing window */}
           <Route path="/" element={<Dashboard />} />
           <Route path="/create" element={<ProfileCreation />} />
         </Route>
