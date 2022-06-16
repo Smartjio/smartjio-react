@@ -6,7 +6,6 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useNavigate } from 'react-router-dom';
 
 import {
-    Box,
     Button,
     Flex,
     FormControl,
@@ -18,12 +17,8 @@ import {
     Stack,
     useColorModeValue,
     Avatar,
-    AvatarBadge,
-    IconButton,
     Center,
-    InputGroup,
   } from '@chakra-ui/react';
-  import { SmallCloseIcon } from '@chakra-ui/icons';
 
 export default function ProfileCreation() {
     const { currentUser } = useAuth();
