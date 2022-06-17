@@ -1,12 +1,13 @@
 import React from "react";
-import { 
-    MdOutlineSportsBasketball, 
-    MdOutlineSportsBaseball, 
-    MdOutlineSportsVolleyball, 
-    MdOutlineSportsTennis,
-    MdOutlineSportsHandball, 
-    MdOutlineSportsSoccer, 
-    MdOutlineThumbDownAlt } from "react-icons/md";
+import {
+  MdOutlineSportsBasketball,
+  MdOutlineSportsBaseball,
+  MdOutlineSportsVolleyball,
+  MdOutlineSportsTennis,
+  MdOutlineSportsHandball,
+  MdOutlineSportsSoccer,
+  MdOutlineThumbDownAlt,
+} from "react-icons/md";
 
 import Nav from "../components/NavBar";
 
@@ -51,19 +52,22 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../firebase.js";
+import Avatar from "../components/AvatarRipple"; // choose friends from their avatar and user_name.
 
 const NavBar = (
   <Nav image="https://uci.nus.edu.sg/suu/wp-content/uploads/sites/5/2020/10/MPSH-1024x681.jpg" />
-);
-
-const myProcess = <CreationProcess />;
+); // this will be queried in the NavBar componenet instead of having to rewrite a query for every single loading of the page.
 
 export default function EventCreation() {
   return (
     <div>
       {NavBar}
       {/* {myProcess} */}
-      <VStack   divider={<StackDivider borderColor='gray.200' />} spacing={10} align='stretch'>
+      <VStack
+        divider={<StackDivider borderColor="gray.200" />}
+        spacing={100}
+        align="stretch"
+      >
         <SelectCourt />
         <SelectSport />
         <SelectProficiency />
@@ -72,7 +76,8 @@ export default function EventCreation() {
   );
 }
 
-function CreationProcess() {
+// query for how many friends do you have, then find a way to display all of them?
+function MyFriends() {
   return <div></div>;
 }
 
@@ -86,7 +91,7 @@ function SelectCourt() {
         Court Value is: <text mb="8px">{value}</text>
       </Center>
       <Container maxW="md">
-        <FormControl isRequired size='lg'>
+        <FormControl isRequired size="lg">
           <FormLabel htmlFor="Court">Select Court</FormLabel>
           <Input
             id="court_id"
@@ -102,27 +107,47 @@ function SelectCourt() {
 }
 
 function SelectSport() {
-    /* variable types: Global, Function, Block */
-    // const [value, setValue] = React.useState("");
-    // const handleChange = (event) => setValue(event.target.value);
+  /* variable types: Global, Function, Block */
+  // const [value, setValue] = React.useState("");
+  // const handleChange = (event) => setValue(event.target.value);
   return (
     <div>
-      <Center>
-        <text>how to glean values off a select component?</text>
-      </Center>
-      <Container maxW="md">
+        {/* <text>how to glean values off a select component?</text> */}
+      <Container maxW="lg">
         <Center>
-            <select isRequired size='lg' borderColor='blue' placeholder="Select Sport">
-                <option value="basketball">basketball <MdOutlineSportsBasketball /></option>
-                <option value="volleyball">volleyball <MdOutlineSportsVolleyball /></option>
-                <option value="football">football <MdOutlineSportsSoccer /></option>
-                <option value="badminton">badminton</option>
-                <option value="tennis">tennis <MdOutlineSportsTennis /></option>
-                <option value="frisbee">dog sport <MdOutlineThumbDownAlt /></option>
-                <option value="table tennis">table tennis</option>
-                <option value="tchoukball">tchoukball <MdOutlineSportsHandball /></option>
-                <option value="handball">Handball <MdOutlineSportsHandball /></option>
+          <VStack>
+            <Heading fontSize="4xl">Choose Sport</Heading>
+            <select
+              isRequired
+              size="lg"
+              borderColor="blue"
+              placeholder="Select Sport"
+            >
+              <option value="basketball">
+                basketball <MdOutlineSportsBasketball />
+              </option>
+              <option value="volleyball">
+                volleyball <MdOutlineSportsVolleyball />
+              </option>
+              <option value="football">
+                football <MdOutlineSportsSoccer />
+              </option>
+              <option value="badminton">badminton</option>
+              <option value="tennis">
+                tennis <MdOutlineSportsTennis />
+              </option>
+              <option value="frisbee">
+                dog sport <MdOutlineThumbDownAlt />
+              </option>
+              <option value="table tennis">table tennis</option>
+              <option value="tchoukball">
+                tchoukball <MdOutlineSportsHandball />
+              </option>
+              <option value="handball">
+                Handball <MdOutlineSportsHandball />
+              </option>
             </select>
+          </VStack>
         </Center>
       </Container>
     </div>
@@ -130,19 +155,26 @@ function SelectSport() {
 }
 
 function SelectProficiency() {
-    return (
-        <div>
+  return (
+    <div>
       <Container maxW="md">
         <Center>
-            <select isRequired size='lg' placeholder="Select Proficiency Level">
-                <option value="beginner">beginner </option>
-                <option value="intermediate">intermediate </option>
-                <option value="advanced">advanced </option>
+          <VStack>
+            <Heading fontSize="4xl">Set Proficiency level</Heading>
+            <select isRequired size="lg" placeholder="Select Proficiency Level">
+              <option value="beginner">beginner </option>
+              <option value="intermediate">intermediate </option>
+              <option value="advanced">advanced </option>
             </select>
+          </VStack>
         </Center>
       </Container>
-        </div>
-    )
+    </div>
+  );
 }
 
 /* create new document onClick button at the bottom of the screen */
+
+function InviteFriends() {
+  return <div></div>;
+}

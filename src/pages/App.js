@@ -10,6 +10,7 @@ import Court from './Court'
 import EventCreation from './EventCreation';
 import MyFriends from './MyFriends';
 import Notification from './Notifications';
+import TestPage from './TestPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/jio" element={<EventCreation />} />
         <Route path="/friends" element={<MyFriends />} />
         <Route path="/notification" element={<Notification />} />
+        <Route path="/testing" element={<TestPage />} />
 
         <Route path="/" element={<Dashboard />} />
 
