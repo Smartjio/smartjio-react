@@ -1,31 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { doc, getDoc } from "firebase/firestore";
 import { db } from '../firebase';
 
 import {
-    Heading,
     Text,
     Avatar,
     Box,
     Flex,
-    Center,
     Button,
     useColorModeValue,
-    Stack,
+    HStack,
   } from '@chakra-ui/react';
 
 export default function ProfilePage() {
+  const { uid } = useParams();
   const [ error, setError ] = useState('');
   const [ data, setData ] = useState('');
-  const { currentUser, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const docRef = doc(db, "users", currentUser.uid);
+        const docRef = doc(db, "users", uid);
         const docSnap = await getDoc(docRef);
     
         if (docSnap.exists()) {
@@ -39,7 +38,7 @@ export default function ProfilePage() {
       }
     }
     fetchData();
-  }, [currentUser]);
+  }, [uid]);
 
   console.log(data);
 
@@ -47,8 +46,8 @@ export default function ProfilePage() {
       try {
           await logout()
           navigate('/login')
-      } catch {
-          setError('Failed to log out')
+      } catch (err) {
+          setError(err)
           console.log(error)
       }
   }
@@ -67,21 +66,34 @@ export default function ProfilePage() {
           rounded={'lg'}
           p={6}
           textAlign={'center'}>
+            <HStack spacing={5}>
             <Avatar
               size={'2xl'}
               src={data.img}
               alt={'Avatar Alt'}
               mb={4}
-              // added
-              // added
               pos={'relative'}
+              textAlign={'center'}
             />
             <Box
               textAlign={'left'}>
               <Text fontSize={'xl'} fontFamily={'body'}>
-              Username: { data.username }
+              <Text as='u'>Username:</Text> { data.username }
+              </Text>
+              <Text fontSize={'xl'} fontFamily={'body'}>
+              <Text as='u'>Location:</Text> { data.location }
+              </Text>
+              <Text fontSize={'xl'} fontFamily={'body'}>
+              <Text as='u'>Level:</Text> { data.level }
+              </Text>
+              <Text fontSize={'xl'} fontFamily={'body'} as='u'>
+              Introduction:
+              </Text>
+              <Text fontSize={'xl'} fontFamily={'body'} noOfLines={[1, 2, 3]}>
+              { data.introduction}
               </Text>
             </Box>
+            </HStack>
               <Button
               flex={1}
               fontSize={'sm'}
