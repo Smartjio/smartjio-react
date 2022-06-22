@@ -6,6 +6,7 @@ import Dashboard from './Dashboard';
 import Signup from "./Signup"
 import Login from "./Login"
 import ProfileCreation from './ProfileCreation';
+import ProfilePage from './ProfilePage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           {/* possible that user skips create by closing window */}
           <Route path="/" element={<Dashboard />} />
           <Route path="/create" element={<ProfileCreation />} />
+          <Route path="/profile/:uid" element={<ProfilePage />} />
         </Route>
       </Routes>
     </AuthProvider>
