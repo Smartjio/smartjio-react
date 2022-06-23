@@ -8,8 +8,12 @@ import { db } from '../firebase'
 import {
     Box,
     Flex,
+    Heading,
     Center,
     useColorModeValue,
+    Wrap,
+    WrapItem,
+    Stack,
   } from '@chakra-ui/react';
 
 export default function Dashboard() {
@@ -40,28 +44,33 @@ export default function Dashboard() {
     // console.log(events)
     var eventsList = events.map(function(id) {
                       return (
-                      <Center key={ id } p={6}>
-                        <Box
-                          maxW={'100vw'}
-                          w={'full'}
-                          bg={ bg }
-                          boxShadow={'2xl'}
-                          rounded={'lg'}
-                          p={6}
-                          textAlign={'left'}>
-                            <EventCard id={ id } />
-                        </Box>
-                      </Center>
+                        <WrapItem key={id}>
+                            <Box
+                              minW={'310px'}
+                              w={'full'}
+                              bg={ bg }
+                              boxShadow={'xl'}
+                              rounded={'lg'}
+                              p={6}
+                              textAlign={'left'}>
+                                <Center>
+                                  <EventCard id={ id } />
+                                </Center>
+                            </Box>
+                        </WrapItem>
                       )
                     })
 
     return (
-        <Flex
-        minH={'100vh'}
-        align={'left'}
-        justify={'center'}
-        bg={useColorModeValue('gray.50', 'gray.800')}>
-          { eventsList }
-        </Flex>
+      <Center justify={'left'}>
+        <Stack>
+        <Heading align={'center'}> 
+          Dashboard 
+        </Heading>
+        <Wrap justify={'center'} spacing={'50px'}>
+              { eventsList }
+        </Wrap>
+        </Stack>
+      </Center>
       );
 }

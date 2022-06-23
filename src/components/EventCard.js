@@ -53,6 +53,10 @@ export default function EventCard(props) {
         fetchData();
       }, [props]);
 
+      function navigateFunction(e) {
+        console.log('insert navigation here')
+      }
+
   return (
     <Box
         role={'group'}
@@ -64,7 +68,8 @@ export default function EventCard(props) {
         boxShadow={'xl'}
         rounded={'lg'}
         pos={'relative'}
-        zIndex={1}>
+        zIndex={1}
+        onClick={navigateFunction}>
           <Image
             rounded={'lg'}
             height={230}
