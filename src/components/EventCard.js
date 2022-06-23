@@ -23,7 +23,7 @@ export default function EventCard(props) {
           try {
             const eventDocRef = doc(db, "events", props.id);
             const eventDocSnap = await getDoc(eventDocRef);
-            
+
             if (eventDocSnap.exists()) {
                 setActivity(eventDocSnap.data().activity);
                 const day = eventDocSnap.data().time.toDate().getDate();
@@ -58,6 +58,7 @@ export default function EventCard(props) {
         role={'group'}
         p={6}
         maxW={'330px'}
+        minW={'300px'}
         w={'full'}
         bg={useColorModeValue('white', 'gray.800')}
         boxShadow={'xl'}
@@ -72,10 +73,10 @@ export default function EventCard(props) {
             src={ courtData.court_image }
           />
         <Stack pt={10} align={'center'}>
-          <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
+          <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'} align={'center'}>
             { activity }
           </Text>
-          <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
+          <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500} align={'center'}>
             { courtData.court_name }
           </Heading>
           <Stack direction={'row'} align={'center'}>
