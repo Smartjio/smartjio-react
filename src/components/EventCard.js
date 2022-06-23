@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
     Box,
-    Center,
     useColorModeValue,
     Heading,
     Text,
@@ -12,7 +11,6 @@ import {
   import { db } from '../firebase';
 
 export default function EventCard(props) {
-    const [ eventData, setEventData ] = useState('');
     const [ courtData, setCourtData ] = useState('');
 
     const [ activity, setActivity ] = useState('');

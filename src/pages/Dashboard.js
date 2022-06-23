@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '../contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
 import EventCard from '../components/EventCard'
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase'
 
 import {
     Box,
-    Flex,
     Heading,
     Center,
     useColorModeValue,
@@ -18,7 +15,6 @@ import {
 
 export default function Dashboard() {
     const [ events, setEvents ] = useState([]);
-    const navigate = useNavigate();
 
     const bg = useColorModeValue('white', 'gray.900')
 
