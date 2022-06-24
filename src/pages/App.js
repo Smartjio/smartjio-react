@@ -11,6 +11,7 @@ import EventCreation from './EventCreation';
 import MyFriends from './MyFriends';
 import Notification from './Notifications';
 import TestPage from './TestPage';
+import ErrorEventNotFound from './ErrorEventNotFound';
 
 function App() {
   return (
@@ -18,12 +19,14 @@ function App() {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/event" element={<Event />} />
+        <Route path="/event/:eid" element={<Event />} />
         <Route path="/court" element={<Court />} />
         <Route path="/jio" element={<EventCreation />} />
         <Route path="/friends" element={<MyFriends />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="/testing" element={<TestPage />} />
+
+        <Route path="/ErrorEventNotFound" element={<ErrorEventNotFound />} />
 
         <Route path="/" element={<Dashboard />} />
 

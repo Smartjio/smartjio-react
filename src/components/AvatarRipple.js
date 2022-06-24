@@ -2,7 +2,7 @@ import React from "react";
 import { Avatar, Box, Center, Flex, keyframes } from "@chakra-ui/react";
 
 export default function AvatarRipple(props) {
-  const { display_picture, user_name } = props;
+  const { display_picture, user_name, player_level } = props;
 
   const size = "96px";
   const color = "teal";
@@ -56,7 +56,7 @@ export default function AvatarRipple(props) {
         />
       </Box>
       <Center>
-        <text>{user_name}</text>
+        <text>{user_name}{player_level}</text>
       </Center>
     </Flex>
   );

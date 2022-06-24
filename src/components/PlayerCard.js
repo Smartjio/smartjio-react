@@ -60,13 +60,13 @@ export default function Card (props) {
           {props.level}
         </Text>
         <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-          {props.playerName}
+          {props.name}
         </Heading>
-        <Stack direction={'row'} align={'center'}>
+        {/* <Stack direction={'row'} align={'center'}>
           <Text fontWeight={800} fontSize={'xl'}>
             {props.accolades} 
           </Text>
-        </Stack>
+        </Stack> */}
 
         {/* testing the use of SVG here */}
         {/* <Logo /> */}

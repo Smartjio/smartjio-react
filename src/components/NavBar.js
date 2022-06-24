@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { BsSun, BsMoonStarsFill } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
 import {
@@ -23,8 +23,22 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import DarkModeButton from "../components/ColourModeToggle";
+// import SuggestionCard from "./PlayerCard";
+import {
+  collection,
+  getDocs,
+  getDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
-const Links = [
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { db } from "../firebase"; // firebase.js is the db conversion.
+
+/* const Links = [
   "Dashboard",
   "My Profile",
   "Notifications",
@@ -43,12 +57,10 @@ const NavLink = ({ children }: { children: ReactNode }) => (
     }}
     href={("../court", "../TestPage")}
   >
-    {/* i need to find a way to make a list to reference where to  */}
     {children}
   </Link>
-);
-
-/* as={'nav'}
+); 
+ as={'nav'}
 spacing={4}
 display={{ base: 'none', md: 'flex' }}>
 {Links.map((link) => (
@@ -68,7 +80,44 @@ display={{ base: 'none', md: 'flex' }}>
 */
 /* The navlink cannot us used to direct a link to a page, but instead all link to the right-most href */
 
-export default function WithAction(props) {
+export default function WithAction() {
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const { currentUser, logout } = useAuth();
+  // const userRef = currentUser.uid; // cannot just read like that outside of an async function ~ might be null. 
+  const [userImage, setUserImage] = useState(""); // image is a string.
+
+  useEffect(() => {
+    const getImage = async () => {
+      const usersCollectionRef = collection(db, "users");
+        const docRef = doc(usersCollectionRef, currentUser.uid); // can just .id? 
+        const docSnap = await getDoc(docRef); // what if this has a runtime error? idk what goes on in the console
+      if (docSnap.exists()) {
+        setUserImage(docSnap.data().img);
+        // console.log("Document data:", docSnap.data());
+        // setUserImage(docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }))); this line is for without using docSnap.exits, 
+      } else {
+        setUserImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2aSUcU-KC_ZGl1KIFES1pwRe4YOMv2gPx_g&usqp=CAU");
+        // for if they do not have a display picture -> keep value of not having a display picture as null. 
+      }
+    };
+
+    getImage();
+  }); // not sure what the [] after the useEffect function was for, maybe to store the array. 
+
+  // console.log(currentUser);
+  // console.log(usersCollectionRef);
+
+  async function handleLogout(e) {
+    try {
+      await logout();
+      navigate("/login");
+    } catch {
+      setError("Failed to log out");
+      console.log(error);
+    }
+  }
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -151,6 +200,7 @@ export default function WithAction(props) {
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
+            {/* stay on the same page */}
             <Button
               as="a"
               target="_blank"
@@ -172,11 +222,15 @@ export default function WithAction(props) {
                 cursor={"pointer"}
                 minW={0}
               >
-                <Avatar size={"md"} src={props.image} />
+                <Avatar size={"md"} src={userImage} />
+                {/* display picture should be shown */}
               </MenuButton>
               <MenuList>
                 {/* <MenuDivider /> */}
-                <MenuItem icon={<MdLogout />} /* command='⌘O' */>
+                <MenuItem
+                  icon={<MdLogout />}
+                  onClick={() => handleLogout()} /* command='⌘O' */
+                >
                   <Link href="./login">
                     Logout
                     {/* update the logout function to close the connection to the site, so that going back will require a login */}
@@ -190,17 +244,3 @@ export default function WithAction(props) {
     </>
   );
 }
-
-
-
-
-/* function DarkModeButton() {
-    const { colorMode, toggleColorMode } = useColorMode()
-    return (
-      <header>
-        <Button onClick={toggleColorMode}>
-          Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-        </Button>
-      </header>
-    )
-  } */
