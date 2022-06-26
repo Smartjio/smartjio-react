@@ -1,21 +1,19 @@
 import React from "react";
-import { MdFileDownloadDone } from "react-icons/md";
+// import { MdFileDownloadDone } from "react-icons/md";
 import Nav from "../components/NavBar";
 
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
 import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  where,
-  query,
+  // collection,
+  // getDocs,
+  // addDoc,
+  // updateDoc,
+  // deleteDoc,
+  // doc,
 } from "firebase/firestore";
 
-import { db } from "../firebase.js";
+// import { db } from "../firebase.js";
 
 export default function MyFriends() {
   return (
