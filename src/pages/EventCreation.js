@@ -1,18 +1,11 @@
 import React, { useState, useEffect, HTMLAttributes } from "react";
+import Nav from "../components/NavBar";
 import {
-  MdOutlineSportsBasketball,
-  MdOutlineSportsBaseball,
-  MdOutlineSportsVolleyball,
-  MdOutlineSportsTennis,
-  MdOutlineSportsHandball,
-  MdOutlineSportsSoccer,
-  MdOutlineThumbDownAlt,
   MdEventAvailable,
   MdCheckCircle,
 } from "react-icons/md";
 
-import Nav from "../components/NavBar";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+// import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
 import {
   Box,
@@ -94,9 +87,8 @@ export default function EventCreation() {
     {label:"Error", content:"There is already an event happening at the same time"}]
   const alertText = []
 
-  const createEvent = async => {
-
-  }
+/*   const createEvent = async => {
+  } */
 
 // try creating an event first, once that is done, we can try querying the db for the court and the date to check if the court is already booked. 
 
@@ -260,27 +252,27 @@ export default function EventCreation() {
               >               
                 <option selected hidden disabled value="">Choose a sport</option>
                 <option value="basketball">
-                  basketball <MdOutlineSportsBasketball />
+                  basketball {/* <MdOutlineSportsBasketball /> */}
                 </option>
                 <option value="volleyball">
-                  volleyball <MdOutlineSportsVolleyball />
+                  volleyball
                 </option>
                 <option value="football">
-                  football <MdOutlineSportsSoccer />
+                  football
                 </option>
                 <option value="badminton">badminton</option>
                 <option value="tennis">
-                  tennis <MdOutlineSportsTennis />
+                  tennis
                 </option>
                 <option value="frisbee">
-                  dog sport <MdOutlineThumbDownAlt />
+                  dog sport
                 </option>
                 <option value="table tennis">table tennis</option>
                 <option value="tchoukball">
-                  tchoukball <MdOutlineSportsHandball />
+                  tchoukball
                 </option>
                 <option value="handball">
-                  Handball <MdOutlineSportsHandball />
+                  Handball
                 </option>
               </select>
             </VStack>
@@ -353,7 +345,7 @@ export default function EventCreation() {
           <Heading fontSize='2xl'> Date selected: {startDate} </Heading>
 
         <Box>
-        <DatePicker
+{/*         <DatePicker
             selected={startDate}
             onChange={(date) => setStartDate(date)}
             showTimeSelect
@@ -363,7 +355,7 @@ export default function EventCreation() {
               new Date().setHours(23, 59, 0),
             ]}
             dateFormat="MMMM d, yyyy h:mm aa"
-          />
+          /> */}
         </Box>
         {/* my calendar is not showing up. */}
 

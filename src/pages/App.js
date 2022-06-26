@@ -19,19 +19,18 @@ function App() {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/event/:eid" element={<Event />} />
-        <Route path="/court" element={<Court />} />
         <Route path="/jio" element={<EventCreation />} />
         <Route path="/friends" element={<MyFriends />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="/testing" element={<TestPage />} />
-
         <Route path="/ErrorEventNotFound" element={<ErrorEventNotFound />} />
 
         <Route path="/" element={<Dashboard />} />
 
         <Route element={<PrivateOutlet />}>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/event/:eid" element={<Event />} />
+          <Route path="/court/:cid" element={<Court />} />
         </Route>
       </Routes>
     </AuthProvider>

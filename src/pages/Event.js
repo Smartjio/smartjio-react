@@ -1,47 +1,37 @@
 import React, { useState, useEffect } from 'react'
 import Card from '../components/PlayerCard' // maybe you should name properly
-import Nav from '../components/NavBar'
-import { Routes, Route, useParams, useNavigate, Navigate } from 'react-router-dom';
-import { useAuth } from "../contexts/AuthContext";
-import { async } from "@firebase/util";
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from "../contexts/AuthContext"; // imported useAuth
+// import { async } from "@firebase/util";
 import { db } from "../firebase.js";
 import Avatar from "../components/AvatarRipple"; // displaying of attendees. 
 import NavBar from "../components/NavBar";
 
 import {
   Box,
-  chakra,
   Container,
   Stack,
   Text,
   Image,
   Flex,
   VStack,
-  HStack,
   Button,
   Heading,
   SimpleGrid,
   StackDivider,
   useColorModeValue,
-  VisuallyHidden,
-  List,
-  ListItem,
   Center,
   WrapItem,
   Wrap,
 } from '@chakra-ui/react';
 
-import { FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
-import { MdLocalShipping } from 'react-icons/md';
+// import { FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
+// import { MdLocalShipping } from 'react-icons/md';
 
 import {
   collection,
-  getDocs,
   getDoc,
-  addDoc,
   updateDoc,
-  deleteDoc,
-  setDoc,
   doc,
 } from "firebase/firestore"; // for CRUD with firebase
 
@@ -49,9 +39,11 @@ export default function Event() {
   /* when we arrive at this page from another page, we need to input parameters into this page before we can query the event */
   const navigate = useNavigate(); // use nav to go from page to another page.
   const { currentUser } = useAuth(); // need this for join event function. 
-  const myID = currentUser.uid;
-  let { eid } = useParams();
-  console.log(eid);
+  console.log(currentUser);
+  // const myID = currentUser.uid; never fking do this
+  console.log("current User = ", currentUser.uid);
+  const { eid } = useParams(); // instead of let and var
+  console.log("event id = ", eid); // working
 
   const [courtImage, setCourtImage] = useState("");
   const [courtRegion, setCourtRegion] = useState("");
@@ -72,20 +64,31 @@ export default function Event() {
       const eventsCollectionRef = collection(db, "events");
       const eventDocRef = doc(eventsCollectionRef, eid); // can just .id? 
       const eventData = await getDoc(eventDocRef);
-      // what if the event does not exist?
+      // why is my query not even working? 
+      console.log("query 1 = ", eventsCollectionRef);
       if (eventData.exists()) {
+        console.log("query for organiser = ", eventData.data().organiser);
         setOrganiser(eventData.data().organiser);
         setCourtId(eventData.data().court_id);
         setEventTime(eventData.data().time);
         setActivity(eventData.data().activity);
         setAttendees(eventData.data().attendees); 
       } else {
-        navigate('/ErrorNotFound')
+        console.log("error")
+        // navigate('/ErrorNotFound')
         // if event exists, navigate to error page -> Not working rn.
       }
     }; 
+
     getEvent();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log("courtId = ", courtId);
+  console.log("activity = ", activity);
+  console.log("organiser = ", organiser);
+  console.log("eventTime = ", eventTime);
+  console.log("attendees = ", attendees);
 
   useEffect(() => {
     const getPeople = async () => { 
@@ -107,7 +110,10 @@ export default function Event() {
     }; 
     getPeople();
     console.log(attendeeDetail);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  console.log("attendeeDetail = ", attendeeDetail);
 
   useEffect(() => {
     const getCourt = async () => {
@@ -124,7 +130,12 @@ export default function Event() {
       }
     };
     getCourt();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log("court image = ", courtImage);
+  console.log("region = ", courtRegion);
+  console.log("name of court = ", courtName);
 
   var attendanceAvatars = attendees.map(function(person) {
     return (
@@ -149,19 +160,21 @@ export default function Event() {
         console.log("error");
       }
     }
+    // to deal with the useEffect missing dependency issue, put useState within useEffect or use eslinter diable comment. 
     getOrganiserDetails();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log("organiserDoc = ", organiserDoc);
 
   // display_picture, user_name, player_level
-
-  // var organiserCard = <Card playerName='JoeMAMA' level='1' IMAGE='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe3AfZeiWn1Sf2YIAq4Bj4qVLW45gU2vCijQ&usqp=CAU' /> 
 
   var theOrganiser = <Card playerName={organiserDoc.user_name} level={organiserDoc.user_level} IMAGE={organiserDoc.user_img} />
 
   const joinEvent = async (id, attendanceList) => {
     // id is the event id.
     const eventDoc = doc(db, "events", id);
-    const newFields = {attendanceList: attendanceList.push(myID)}; // adding currentUser into the attendance list.
+    const newFields = {attendanceList: attendanceList.push(currentUser.uid)}; // adding currentUser into the attendance list.
     await updateDoc(eventDoc, newFields);
   };
 
@@ -258,15 +271,13 @@ export default function Event() {
                 boxShadow: 'lg',
                 
               }}
-              onClick={joinEvent(eid, attendees)} >
+              onClick={() => joinEvent(eid, attendees)} >
               Join event
-              {/* onClick, how do i add this current user to the database? -> reference the userAuth */}
+              {/* onClick, adds yourself to the event! */}
             </Button>
           </Stack>
         </SimpleGrid>
       </Container> 
-      {/* <Simple image='https://uci.nus.edu.sg/suu/wp-content/uploads/sites/5/2020/10/MPSH-1024x681.jpg' activityType='Indoor Basketball' location='NUS UTSH 2' 
-comments='Intermediate to advanced players are welcomed!' date='30/06/2022' startTime='4' endTime='6' timeOfDay='pm' /> */}
     </div>
   )
 }

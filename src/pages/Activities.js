@@ -15,9 +15,15 @@ import {
   Container,
   VStack,
 } from '@chakra-ui/react';
+import {
+    collection,
+    getDoc,
+    doc,
+  } from "firebase/firestore";
 
 export default function Activities() {
   return (
+    /* get docs where you are an attendee of the event / participant. */
     <div>Activities</div>
   )
 }
