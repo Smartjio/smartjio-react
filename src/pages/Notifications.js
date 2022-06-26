@@ -1,8 +1,8 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useCallback } from "react";
 import {
   collection,
   getDoc,
-  updateDoc,
+  // updateDoc,
   doc,
   query,
   where,
@@ -13,14 +13,13 @@ import { Box, Center, Heading, VStack, Image } from "@chakra-ui/react";
 import NavBar from "../components/NavBar";
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
-import AvatarRipple from "../components/AvatarRipple";
+// bimport AvatarRipple from "../components/AvatarRipple"; intend to use this layout in future. 
 
 export default function Notifications() {
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
   const { currentUser } = useAuth();
   console.log(currentUser);
-  // const [sender, setSender] = useState("");
-  // const [eventId, setEventId] = useState(""); <ListIcon as={MdCheckCircle} color='green.500' />
+  // bug = cant update the finalDetails array properly. 
   const [myNotifications, setMyNotifications] = useState([]);
   const [allDetails, setAllDetails] = useState([]);
   const [finalDetails, setFinalDetails] = useState([]);
@@ -49,10 +48,10 @@ export default function Notifications() {
       }
     };
     getNotifications();
-    console.log("see all my notifications = ", myNotifications);
-  }, [currentUser]); // why is currentUser in the dependency list?
+    // console.log("see all my notifications = ", myNotifications);
+  }, [currentUser, myNotifications]); // why is currentUser in the dependency list?
 
-  function resolvePromise (elem) {
+  const resolvePromise = useCallback((elem) => {
     return (
         elem.then(value => {
             console.log("whats within my promise = ", value); // 👉️ "hello"
@@ -64,7 +63,7 @@ export default function Notifications() {
             // return ("failed");
           })
     );
-  }
+  }, [finalDetails]);
 
   useEffect(() => {
     // look through
@@ -89,9 +88,7 @@ export default function Notifications() {
         } else {
             console.log("Error");
         }
-
     };
-
     // super important piece of code: .map(resolvePromise) -> runs the thing to fill up final details. 
 
     // myNotifications.map((notify) => getDetails(notify)); // why does this return a promise?
@@ -106,9 +103,9 @@ export default function Notifications() {
     setAllDetails(temp); 
     /* .map((notify) => notify.then(value => {return(value);}).catch(err => {console.log(err);})
     ));  */// i get an array of promise object?
-  }, [myNotifications]);
+  }, [myNotifications, resolvePromise]);
 
-  // console.log("second query = ", allDetails);
+  console.log("second query = ", allDetails);
   console.log("final detail query = ", finalDetails); // not adding to the [] but replacing.
   //  setAllDetails(allDetails.map(resolvePromise));
 

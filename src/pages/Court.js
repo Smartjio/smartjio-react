@@ -1,6 +1,5 @@
 import { library, icon } from '@fortawesome/fontawesome-svg-core'
-// import { ReactComponent as Logo } from './icons/radioactive.svg';
-import Nav from '../components/NavBar'
+import NavBar from '../components/NavBar'
 import Comments from '../components/Comments'
 
 import {
@@ -28,27 +27,6 @@ import {
   Icon,
 } from '@chakra-ui/react';
 
-const IMAGE = 'https://uci.nus.edu.sg/suu/wp-content/uploads/sites/5/2020/10/MPSH-1024x681.jpg'; // query this image from the database 
-const NavBar = <Nav image='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LGydG5ArmeGp6mcS56nwoqEGaVp2T7EbWg&usqp=CAU' />;
-const userProfile = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT8BXTP8qGIQ1OcbBtyySopofUV4WM0nQeIQ&usqp=CAU';
-// const Content = <Comments />;
-
-const myComments = <Comments text='this court is g' image={userProfile} />;
-
-function allComments() {
-  return (
-    <div>
-      <VStack>
-        {myComments}
-        {myComments}
-        {/* This might not be viewble and why? */}
-      </VStack>
-    </div>
-  )
-}
-
-const seeAllComments = <allComments />;
-
 interface FeatureProps {
   text: string;
   iconBg: string;
@@ -73,10 +51,12 @@ const Feature = ({ text, icon, iconBg }: FeatureProps) => {
 };
 
 
-export default function Court(props) {
-  const {court_name, court_location, court_activity} = props
+export default function Court() {
+  // const {court_name, court_location, court_activity} = props
+
   return (
     <div>
+      <NavBar />
     <Container maxW={'5xl'} py={12}>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
         <Stack spacing={4}>
@@ -136,7 +116,6 @@ export default function Court(props) {
         </Flex>
       </SimpleGrid>
     </Container>
-    <Comments />
     </div>
   );
 }
