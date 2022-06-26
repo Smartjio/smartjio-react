@@ -60,8 +60,8 @@ import { db } from "../firebase.js";
 import { useAuth } from "../contexts/AuthContext";
 import { async } from "@firebase/util";
 import { useNavigate } from "react-router-dom";
-import DatePicker from "react-datepicker"; // calendar component
-import calendarComponent from "../components/date-picker";
+// import DatePicker from "react-datepicker"; // calendar component
+// import calendarComponent from "../components/date-picker";
 
 export default function EventCreation() {
   const navigate = useNavigate(); // use nav to go from page to another page.
@@ -79,9 +79,9 @@ export default function EventCreation() {
   console.log(sport);
   console.log(levelProf);
 
-  const alertContent = [{label: "Success!", content: "Your Jio was successfully created!"}, {label: "Error", content:"Court chosen does not exist"}, 
+  /* const alertContent = [{label: "Success!", content: "Your Jio was successfully created!"}, {label: "Error", content:"Court chosen does not exist"}, 
     {label:"Error", content:"There is already an event happening at the same time"}]
-  const alertText = []
+  const alertText = [] */
 
 /*   const createEvent = async => {
   } */
