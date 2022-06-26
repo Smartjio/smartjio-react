@@ -63,10 +63,6 @@ import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker"; // calendar component
 import calendarComponent from "../components/date-picker";
 
-const NavBar = (
-  <Nav />
-); 
-
 export default function EventCreation() {
   const navigate = useNavigate(); // use nav to go from page to another page.
   const { currentUser, logout } = useAuth();
@@ -368,7 +364,7 @@ export default function EventCreation() {
 
   return (
     <div>
-      {NavBar}
+      <Nav />
       <Container maxW="1100px">
         <VStack
           divider={<StackDivider borderColor="gray.200" />}

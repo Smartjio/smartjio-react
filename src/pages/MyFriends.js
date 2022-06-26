@@ -5,27 +5,6 @@ import Nav from "../components/NavBar";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
 import {
-  Box,
-  chakra,
-  Container,
-  Stack,
-  Text,
-  Image,
-  Flex,
-  VStack,
-  HStack,
-  Button,
-  Heading,
-  SimpleGrid,
-  StackDivider,
-  useColorModeValue,
-  VisuallyHidden,
-  List,
-  ListItem,
-  Center,
-} from "@chakra-ui/react";
-
-import {
   collection,
   getDocs,
   addDoc,

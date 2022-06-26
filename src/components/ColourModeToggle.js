@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, ButtonProps, Flex, useColorMode } from '@chakra-ui/react';
+import { Button, useColorMode } from '@chakra-ui/react';
 import { BsSun, BsMoonStarsFill } from 'react-icons/bs';
 
 export default function ColourModeToggle() {
