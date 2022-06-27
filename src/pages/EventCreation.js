@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, /* useEffect */ } from "react";
 import NavBar from "../components/NavBar";
 import { db } from "../firebase.js";
 import { useAuth } from "../contexts/AuthContext";
@@ -33,9 +33,9 @@ import {
 import {
     collection,
     addDoc,
-    doc,
-    where,
-    query,
+    // doc,
+    // where,
+    // query,
   } from "firebase/firestore";
 
 function SuccessCreation() {
@@ -67,7 +67,7 @@ function SuccessCreation() {
     )
   }
 
-  function FailureCreation() {
+/*   function FailureCreation() {
     const {
       isOpen: isVisible,
       onClose,
@@ -94,7 +94,7 @@ function SuccessCreation() {
     ) : (
       <Button onClick={onOpen}>Show Alert</Button>
     )
-  }
+  } */
 
 export default function EventCreation() {
     const [value, setValue] = useState("");
