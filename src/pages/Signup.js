@@ -40,7 +40,7 @@ export default function Signup() {
         }
         try {
             await signup(emailRef.current.value, passwordRef.current.value)
-            navigate("/login")
+            navigate("/create")
         } catch {
             setError('Failed to create an account')
             console.log(error)
