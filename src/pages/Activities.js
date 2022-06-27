@@ -6,7 +6,7 @@ export default function Activities() {
     <>
     <NavBar />
     {/* get docs where you are an attendee of the event / participant. */}
-    <div>Activities Under Construction. Here, we plan to allow users to be able to view all the activities they have signed up for</div>
+    <div>Activities Under Construction. Here, we plan to allow users to be able to view all the activities they have signed up for.</div>
     </>
   )
 }

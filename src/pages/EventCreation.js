@@ -3,20 +3,23 @@ import NavBar from "../components/NavBar";
 import { db } from "../firebase.js";
 import { useAuth } from "../contexts/AuthContext";
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 import {
     // MdEventAvailable,
     MdCheckCircle,
   } from "react-icons/md";
 
 import {
-  useDisclosure,
-  Alert,
+  // useDisclosure,
+  // Alert,
   Center,
-  AlertIcon,
+  // AlertIcon,
   Box,
-  AlertTitle,
-  AlertDescription,
-  CloseButton,
+  // AlertTitle,
+  // AlertDescription,
+  // CloseButton,
   Text,
   Heading,
   FormControl,
@@ -38,34 +41,34 @@ import {
     // query,
   } from "firebase/firestore";
 
-function SuccessCreation() {
-    const {
-      isOpen: isVisible,
-      onClose,
-      onOpen,
-    } = useDisclosure({ defaultIsOpen: true })
+// function SuccessCreation() {
+//     const {
+//       isOpen: isVisible,
+//       onClose,
+//       onOpen,
+//     } = useDisclosure({ defaultIsOpen: true })
   
-    return isVisible ? (
-      <Alert status='success'>
-        <AlertIcon />
-        <Box>
-          <AlertTitle>Success!</AlertTitle>
-          <AlertDescription>
-            Event is set! 
-          </AlertDescription>
-        </Box>
-        <CloseButton
-          alignSelf='flex-start'
-          position='relative'
-          right={-1}
-          top={-1}
-          onClick={onClose}
-        />
-      </Alert>
-    ) : (
-      <Button onClick={onOpen}>Show Event Creation Result</Button>
-    )
-  }
+//     return isVisible ? (
+//       <Alert status='success'>
+//         <AlertIcon />
+//         <Box>
+//           <AlertTitle>Success!</AlertTitle>
+//           <AlertDescription>
+//             Event is set! 
+//           </AlertDescription>
+//         </Box>
+//         <CloseButton
+//           alignSelf='flex-start'
+//           position='relative'
+//           right={-1}
+//           top={-1}
+//           onClick={onClose}
+//         />
+//       </Alert>
+//     ) : (
+//       <Button onClick={onOpen}>Show Event Creation Result</Button>
+//     )
+//   }
 
 /*   function FailureCreation() {
     const {
@@ -103,7 +106,8 @@ export default function EventCreation() {
   const [courtVal, setCourtVal] = useState(0);
   const [sport, setSport] = useState("");
   const [levelProf, setLevel] = useState("");
-  const [eventTime, setEventTime] = useState("");
+  // const [eventTime, setEventTime] = useState("");
+  const [date, setDate] = useState(new Date());
 
   let tempArray = [];
   const { currentUser } = useAuth();
@@ -118,17 +122,18 @@ export default function EventCreation() {
   async function createEvent() {
     // onClick => calls this function that addDoc into firebase => dunnid to worry about clashes just yet. 
     try {
-        await addDoc(collection(db, "events"), { activity: sport, attendees: tempArray, court_id: courtVal, date: new Date(), organiser: currentUser.uid, time: eventTime });
+        await addDoc(collection(db, "events"), { activity: sport, attendees: tempArray, court_id: courtVal, date: date, organiser: currentUser.uid});
     } catch (error) {
         // return the error alert from here! 
         console.log(error);
     }
   }
 
+  // console.log(date)
+
   return (
     <div>
       <NavBar />
-      EventCreation Under Construction
       <VStack
           divider={<StackDivider borderColor="gray.200" />}
           spacing={100}
@@ -136,12 +141,14 @@ export default function EventCreation() {
         >
     <Container>
     <Center>
-        <Text>Postal Code numbers only!</Text>
+      <VStack>
+        <Text>Postal Code numbers only! Currently please use postal code 138607. Thank you! We will be adding more courts in the future.</Text>
         <Heading fontSize="2xl">
           {" "}
           Court selected: {" "}
           {courtVal === 0 ? " " : String(courtVal)}{" "}
         </Heading>
+        </VStack>
       </Center>
       <Container maxW="md">
         <FormControl isRequired size="lg">
@@ -171,7 +178,17 @@ export default function EventCreation() {
       </Container>
     </Container>
       
-
+    <Container maxW="lg">
+          <Center>
+            <VStack>
+              <Heading fontSize="4xl">Date and Time of Event:</Heading>
+              <Center>
+              <DatePicker selected={date} showTimeSelect onChange={date => setDate(date)} />
+              </Center>
+            </VStack>
+          </Center>
+        </Container>
+        {/* onSubmit => for the form, all of the values should be colated.  */}
 
 
       <Container maxW="lg">
@@ -236,7 +253,7 @@ export default function EventCreation() {
             </VStack>
           </Center>
         </Container>
-
+{/* 
         <Container maxW="md">
           <Center>
             <VStack>
@@ -254,18 +271,18 @@ export default function EventCreation() {
               </select>
             </VStack>
           </Center>
-        </Container>
+        </Container> */}
 
         <Center>
             <VStack>
-            <SuccessCreation />
+            {/* <SuccessCreation /> */}
         <Box alignItems='center'>
         <Button colorScheme='yellow' leftIcon={<MdCheckCircle />} onClick={createEvent}> Organise this event! </Button>
         </Box>
             </VStack>
         </Center>
 
-        <Box display='flex' alignItems='center' >Spacing at end</Box>
+        {/* <Box display='flex' alignItems='center' >Spacing at end</Box> */}
 
         </VStack>
     </div>
