@@ -187,7 +187,7 @@ export default function WithAction() {
                   icon={<MdLogout />}
                   onClick={() => handleLogout()} /* command='⌘O' */
                 >
-                  <Link href="./login">
+                  <Link href="/login">
                     Logout
                     {/* update the logout function to close the connection to the site, so that going back will require a login */}
                   </Link>

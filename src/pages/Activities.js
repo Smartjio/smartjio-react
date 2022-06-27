@@ -1,29 +1,12 @@
 import React from 'react';
-import {
-  Box,
-  Heading,
-  Link,
-  Image,
-  Text,
-  Divider,
-  HStack,
-  Tag,
-  Wrap,
-  WrapItem,
-  SpaceProps,
-  useColorModeValue,
-  Container,
-  VStack,
-} from '@chakra-ui/react';
-import {
-    collection,
-    getDoc,
-    doc,
-  } from "firebase/firestore";
+import NavBar from '../components/NavBar'
 
 export default function Activities() {
   return (
-    /* get docs where you are an attendee of the event / participant. */
-    <div>Activities</div>
+    <>
+    <NavBar />
+    {/* get docs where you are an attendee of the event / participant. */}
+    <div>Activities Under Construction. Here, we plan to allow users to be able to view all the activities they have signed up for</div>
+    </>
   )
 }

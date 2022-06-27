@@ -14,6 +14,8 @@ import TestPage from './TestPage';
 import ErrorEventNotFound from './ErrorEventNotFound';
 import ProfileCreation from './ProfileCreation';
 import ProfilePage from './ProfilePage';
+import Activities from './Activities';
+import Settings from './Settings';
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
           <Route path="/notification" element={<Notification />} />
           <Route path="/testing" element={<TestPage />} />
           <Route path="/ErrorEventNotFound" element={<ErrorEventNotFound />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/activities" element={<Activities />} />
         </Route>
       </Routes>
     </AuthProvider>
