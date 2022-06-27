@@ -40,6 +40,7 @@ import {
     // where,
     // query,
   } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 // function SuccessCreation() {
 //     const {
@@ -112,6 +113,8 @@ export default function EventCreation() {
   let tempArray = [];
   const { currentUser } = useAuth();
 
+  const navigate = useNavigate();
+
   /* console.log(courtVal);
   console.log(sport);
   console.log(levelProf);
@@ -123,6 +126,7 @@ export default function EventCreation() {
     // onClick => calls this function that addDoc into firebase => dunnid to worry about clashes just yet. 
     try {
         await addDoc(collection(db, "events"), { activity: sport, attendees: tempArray, court_id: courtVal, date: date, organiser: currentUser.uid});
+        navigate("/");
     } catch (error) {
         // return the error alert from here! 
         console.log(error);
@@ -183,7 +187,7 @@ export default function EventCreation() {
             <VStack>
               <Heading fontSize="4xl">Date and Time of Event:</Heading>
               <Center>
-              <DatePicker selected={date} showTimeSelect onChange={date => setDate(date)} />
+              <DatePicker selected={date} showTimeSelect dateFormat="Pp" onChange={date => setDate(date)} />
               </Center>
             </VStack>
           </Center>
