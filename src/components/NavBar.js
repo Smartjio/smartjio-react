@@ -74,6 +74,15 @@ export default function WithAction() {
     }
   }
 
+  async function handleJio(e) {
+    try {
+      await navigate("/jio");
+    } catch {
+      setError("Failed to log out");
+      console.log(error);
+    }
+  }
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -160,12 +169,13 @@ export default function WithAction() {
             <Button
               as="a"
               target="_blank"
-              href={"../jio"}
+              // href="/jio"
               variant={"solid"}
               colorScheme={"teal"}
               size={"sm"}
               mr={4}
               leftIcon={<AddIcon />}
+              onClick={() => handleJio()}
             >
               Create Jio
               {/* This button brings you to the EventCreation page */}
