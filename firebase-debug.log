@@ -1,37 +1,37 @@
-[debug] [2022-06-26T06:27:59.114Z] ----------------------------------------------------------------------
-[debug] [2022-06-26T06:27:59.115Z] Command:       /opt/homebrew/Cellar/node/17.8.0/bin/node /opt/homebrew/bin/firebase serve
-[debug] [2022-06-26T06:27:59.115Z] CLI Version:   11.0.1
-[debug] [2022-06-26T06:27:59.115Z] Platform:      darwin
-[debug] [2022-06-26T06:27:59.115Z] Node Version:  v17.8.0
-[debug] [2022-06-26T06:27:59.118Z] Time:          Sun Jun 26 2022 14:27:59 GMT+0800 (Singapore Standard Time)
-[debug] [2022-06-26T06:27:59.118Z] ----------------------------------------------------------------------
+[debug] [2022-06-27T06:44:22.169Z] ----------------------------------------------------------------------
+[debug] [2022-06-27T06:44:22.170Z] Command:       /opt/homebrew/Cellar/node/17.8.0/bin/node /opt/homebrew/bin/firebase serve
+[debug] [2022-06-27T06:44:22.170Z] CLI Version:   11.0.1
+[debug] [2022-06-27T06:44:22.170Z] Platform:      darwin
+[debug] [2022-06-27T06:44:22.170Z] Node Version:  v17.8.0
+[debug] [2022-06-27T06:44:22.174Z] Time:          Mon Jun 27 2022 14:44:22 GMT+0800 (Singapore Standard Time)
+[debug] [2022-06-27T06:44:22.174Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2022-06-26T06:27:59.119Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
-[debug] [2022-06-26T06:27:59.165Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2022-06-26T06:27:59.165Z] > authorizing via signed-in user (chanchoonlengs@gmail.com)
-[debug] [2022-06-26T06:27:59.165Z] [iam] checking project smartjio-development for permissions ["firebase.projects.get"]
-[debug] [2022-06-26T06:27:59.166Z] > refreshing access token with scopes: []
-[debug] [2022-06-26T06:27:59.166Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+[debug] [2022-06-27T06:44:22.175Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2022-06-27T06:44:22.226Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-06-27T06:44:22.226Z] > authorizing via signed-in user (chanchoonlengs@gmail.com)
+[debug] [2022-06-27T06:44:22.226Z] [iam] checking project smartjio-development for permissions ["firebase.projects.get"]
+[debug] [2022-06-27T06:44:22.227Z] > refreshing access token with scopes: []
+[debug] [2022-06-27T06:44:22.227Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
  <request body omitted>
-[debug] [2022-06-26T06:27:59.264Z] <<< HTTP RESPONSE 200 {"expires":"Mon, 01 Jan 1990 00:00:00 GMT","date":"Sun, 26 Jun 2022 06:27:59 GMT","pragma":"no-cache","cache-control":"no-cache, no-store, max-age=0, must-revalidate","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
-[debug] [2022-06-26T06:27:59.328Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartjio-development:testIamPermissions [none]
-[debug] [2022-06-26T06:27:59.328Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartjio-development:testIamPermissions {"permissions":["firebase.projects.get"]}
-[debug] [2022-06-26T06:27:59.793Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
-[debug] [2022-06-26T06:27:59.794Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
-[debug] [2022-06-26T06:28:00.330Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartjio-development:testIamPermissions 200
-[debug] [2022-06-26T06:28:00.331Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartjio-development:testIamPermissions {"permissions":["firebase.projects.get"]}
-[debug] [2022-06-26T06:28:00.332Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development [none]
-[debug] [2022-06-26T06:28:00.823Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development 200
-[debug] [2022-06-26T06:28:00.823Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development {"projectId":"smartjio-development","projectNumber":"685881396372","displayName":"SmartJio-Development","name":"projects/smartjio-development","resources":{"hostingSite":"smartjio-development","storageBucket":"smartjio-development.appspot.com","locationId":"asia-southeast1"},"state":"ACTIVE"}
+[debug] [2022-06-27T06:44:22.309Z] <<< HTTP RESPONSE 200 {"pragma":"no-cache","date":"Mon, 27 Jun 2022 06:44:22 GMT","expires":"Mon, 01 Jan 1990 00:00:00 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2022-06-27T06:44:22.364Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartjio-development:testIamPermissions [none]
+[debug] [2022-06-27T06:44:22.365Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartjio-development:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2022-06-27T06:44:22.864Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2022-06-27T06:44:22.864Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2022-06-27T06:44:23.372Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartjio-development:testIamPermissions 200
+[debug] [2022-06-27T06:44:23.372Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/smartjio-development:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2022-06-27T06:44:23.373Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development [none]
+[debug] [2022-06-27T06:44:23.922Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development 200
+[debug] [2022-06-27T06:44:23.922Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development {"projectId":"smartjio-development","projectNumber":"685881396372","displayName":"SmartJio-Development","name":"projects/smartjio-development","resources":{"hostingSite":"smartjio-development","storageBucket":"smartjio-development.appspot.com","locationId":"asia-southeast1"},"state":"ACTIVE"}
 [info] 
 [info] === Serving from '/Users/choonleng/Documents/Orbital/Web Dev/smartjio-react'...
 [info] 
-[debug] [2022-06-26T06:28:00.824Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/smartjio-development/sites 
-[debug] [2022-06-26T06:28:02.127Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/smartjio-development/sites 200
-[debug] [2022-06-26T06:28:02.127Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/smartjio-development/sites {"sites":[{"name":"projects/smartjio-development/sites/smartjio-development","defaultUrl":"https://smartjio-development.web.app","appId":"1:685881396372:web:26d4e67ac020624e63b881","type":"DEFAULT_SITE"}]}
-[debug] [2022-06-26T06:28:02.128Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development/webApps/1:685881396372:web:26d4e67ac020624e63b881/config [none]
-[debug] [2022-06-26T06:28:03.294Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development/webApps/1:685881396372:web:26d4e67ac020624e63b881/config 200
-[debug] [2022-06-26T06:28:03.294Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development/webApps/1:685881396372:web:26d4e67ac020624e63b881/config {"projectId":"smartjio-development","appId":"1:685881396372:web:26d4e67ac020624e63b881","storageBucket":"smartjio-development.appspot.com","locationId":"asia-southeast1","apiKey":"AIzaSyBkbPG0lIOT0YDfGl0PljLXyEhuG-8n7ZU","authDomain":"smartjio-development.firebaseapp.com","messagingSenderId":"685881396372","measurementId":"G-GGPZ83HWRQ"}
+[debug] [2022-06-27T06:44:23.923Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/smartjio-development/sites 
+[debug] [2022-06-27T06:44:25.345Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/smartjio-development/sites 200
+[debug] [2022-06-27T06:44:25.345Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/smartjio-development/sites {"sites":[{"name":"projects/smartjio-development/sites/smartjio-development","defaultUrl":"https://smartjio-development.web.app","appId":"1:685881396372:web:26d4e67ac020624e63b881","type":"DEFAULT_SITE"}]}
+[debug] [2022-06-27T06:44:25.346Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development/webApps/1:685881396372:web:26d4e67ac020624e63b881/config [none]
+[debug] [2022-06-27T06:44:25.894Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development/webApps/1:685881396372:web:26d4e67ac020624e63b881/config 200
+[debug] [2022-06-27T06:44:25.894Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/smartjio-development/webApps/1:685881396372:web:26d4e67ac020624e63b881/config {"projectId":"smartjio-development","appId":"1:685881396372:web:26d4e67ac020624e63b881","storageBucket":"smartjio-development.appspot.com","locationId":"asia-southeast1","apiKey":"AIzaSyBkbPG0lIOT0YDfGl0PljLXyEhuG-8n7ZU","authDomain":"smartjio-development.firebaseapp.com","messagingSenderId":"685881396372","measurementId":"G-GGPZ83HWRQ"}
 [warn] ⚠  hosting: Port 5000 is not available. Trying another port... {"metadata":{"emulator":{"name":"hosting"},"message":"\u001b[33mhosting: \u001b[39mPort 5000 is not available. Trying another port..."}}
 [info] i  hosting: Serving hosting files from: build {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mbuild\u001b[22m"}}
 [info] ✔  hosting: Local server: http://localhost:5005 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5005\u001b[22m\u001b[24m"}}
