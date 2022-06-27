@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import EventCard from '../components/EventCard'
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from '../firebase'
+import { db } from '../firebase';
+import NavBar from "../components/NavBar";
 
 import {
     Box,
@@ -22,11 +23,10 @@ export default function Dashboard() {
       const fetchEvents = async () => {
         try {
           const currentTime = new Date();
-          const q = query(collection(db, "events"), where("time", ">=", currentTime));
+          const q = query(collection(db, "events"), where("date", ">=", currentTime));
           const querySnapshot = await getDocs(q);
           querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
-            // console.log(doc.id);
             setEvents(events => [...events, doc.id]);
             setEvents(events => [...new Set(events)]);
           });
@@ -58,15 +58,18 @@ export default function Dashboard() {
                     })
 
     return (
-      <Center justify={'left'}>
+      <>
+      <NavBar />
+      <Center justify={'left'} p={2}>
         <Stack>
-        <Heading align={'center'}> 
-          Dashboard 
-        </Heading>
-        <Wrap justify={'center'} spacing={'50px'}>
-              { eventsList }
-        </Wrap>
+          <Heading align={'center'}>
+            Dashboard
+          </Heading>
+          <Wrap justify={'center'} spacing={'50px'}>
+            {eventsList}
+          </Wrap>
         </Stack>
       </Center>
+      </>
       );
 }
