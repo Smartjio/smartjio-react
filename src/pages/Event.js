@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 // import Card from '../components/PlayerCard' // maybe you should name properly
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // import { useAuth } from "../contexts/AuthContext"; // imported useAuth
 // import { async } from "@firebase/util";
 import { db } from "../firebase.js";
@@ -40,6 +40,7 @@ import {
 // the order of your functions matter alot. 
 
 export default function Event() {
+  const navigate = useNavigate();
   /* when we arrive at this page from another page, we need to input parameters into this page before we can query the event */
   // const { currentUser } = useAuth(); // need this for join event function. 
   // console.log(currentUser);
@@ -170,15 +171,26 @@ export default function Event() {
 
   // console.log(participants[0]); -> var component = function... best to write it within the return of the export default... idk why
 
-  console.log(myData);
-  console.log(time);
+  // console.log(myData);
+  // console.log(time);
+
+  async function navigateOrganiser(e) {
+    try {
+      await navigate("/profile/" + myData.organiser);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div>
       <NavBar />
       {/* <Text>{eid}</Text> */}
       <Image src={courtImg.court_image} />
       <Heading>Organiser of Event</Heading>
+      <Box onClick={() => navigateOrganiser()}>
       <Avatar display_picture={orgInfo.img} user_name={orgInfo.username} player_level={orgInfo.level}/>
+      </Box>
       <OrderedList>
         <ListItem>activity: {myData.activity}</ListItem>
         <ListItem>court is: {myData.court_id}</ListItem>
@@ -189,10 +201,10 @@ export default function Event() {
       {participants.map(function(person) {
     // console.log("inside the loop = ", person); // runs
     return (
-      <WrapItem key={person}>
+      <WrapItem key={person} >
         <Box>
           <Center>
-            <Avatar display_picture={person.img} user_name={person.username} player_level={person.level}/>
+            <Avatar display_picture={person.img} user_name={person.username} player_level={person.level} />
           </Center>
           {/* <Image src={person.img} />
           <Heading>player name: {person.username}</Heading>
