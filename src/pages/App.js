@@ -23,7 +23,6 @@ function App() {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-
         <Route element={<PrivateOutlet />}>
           <Route path="/" element={<Dashboard />} />
           {/* signup goes to create and login goes to slash */}
