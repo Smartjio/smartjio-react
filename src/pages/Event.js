@@ -386,5 +386,6 @@ export default function Event() {
         </SimpleGrid>
       </Container> 
     </div>
+
   ) */
 }

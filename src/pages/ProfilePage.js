@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '../contexts/AuthContext'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { doc, getDoc } from "firebase/firestore";
 import { db } from '../firebase';
 
+import NavBar from '../components/NavBar'
 import {
     Text,
     Avatar,
     Box,
     Flex,
-    Button,
     useColorModeValue,
     HStack,
   } from '@chakra-ui/react';
 
 export default function ProfilePage() {
   const { uid } = useParams();
-  const [ error, setError ] = useState('');
   const [ data, setData ] = useState('');
-  const { logout } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,22 +36,13 @@ export default function ProfilePage() {
     fetchData();
   }, [uid]);
 
-  console.log(data);
-
-  async function handleLogout(e) {
-      try {
-          await logout()
-          navigate('/login')
-      } catch (err) {
-          setError(err)
-          console.log(error)
-      }
-  }
-
   return (
+    <>
+      <NavBar />
       <Flex
       // minH={'100vh'}
       // align={'center'}
+      p={2}
       justify={'center'}
       bg={useColorModeValue('gray.50', 'gray.800')}>
       {/* <Center py={6}> */}
@@ -94,26 +81,9 @@ export default function ProfilePage() {
               </Text>
             </Box>
             </HStack>
-              <Button
-              flex={1}
-              fontSize={'sm'}
-              rounded={'full'}
-              bg={'blue.400'}
-              color={'white'}
-              boxShadow={
-                  '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
-              }
-              _hover={{
-                  bg: 'blue.500',
-              }}
-              _focus={{
-                  bg: 'blue.500',
-              }}
-              onClick={handleLogout}>
-              Log Out
-              </Button>
           </Box>
       {/* </Center> */}
       </Flex>
+    </>
     );
 }
