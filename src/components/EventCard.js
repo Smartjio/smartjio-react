@@ -9,12 +9,15 @@ import {
   } from '@chakra-ui/react';
   import { doc, getDoc } from "firebase/firestore";
   import { db } from '../firebase';
+  import { useNavigate } from 'react-router-dom';
 
 export default function EventCard(props) {
     const [ courtData, setCourtData ] = useState('');
 
     const [ activity, setActivity ] = useState('');
     const [ date, setDate ] = useState('');
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -23,11 +26,17 @@ export default function EventCard(props) {
             const eventDocSnap = await getDoc(eventDocRef);
 
             if (eventDocSnap.exists()) {
-                setActivity(eventDocSnap.data().activity);
-                const day = eventDocSnap.data().date.toDate().getDate();
-                const month = eventDocSnap.data().date.toDate().getMonth();
-                const year = eventDocSnap.data().date.toDate().getFullYear();
-                setDate(day + '/' + month + '/' + year);
+                const data = eventDocSnap.data();
+                setActivity(data.activity);
+                const day = data.date.toDate().getDate();
+                const month = data.date.toDate().getMonth();
+                const year = data.date.toDate().getFullYear();
+                const hour = data.date.toDate().getHours();
+                let min = data.date.toDate().getMinutes().toString();
+                while (min.length < 2) {
+                  min = "0" + min;
+                }
+                setDate(day + '/' + month + '/' + year + ' at ' + hour + ":" + min);
                 //console.log(eventDocSnap.data().time.toDate().getTime());
                 
                 const court = eventDocSnap.data().court_id;
@@ -51,8 +60,12 @@ export default function EventCard(props) {
         fetchData();
       }, [props]);
 
-      function navigateFunction(e) {
-        console.log('insert navigation here')
+      async function navigateEvent(e) {
+        try {
+          await navigate("/event/" + props.id);
+        } catch (error) {
+          console.log(error);
+        }
       }
 
   return (
@@ -67,7 +80,7 @@ export default function EventCard(props) {
         rounded={'lg'}
         pos={'relative'}
         zIndex={1}
-        onClick={navigateFunction}>
+        onClick={navigateEvent}>
           <Image
             rounded={'lg'}
             height={230}

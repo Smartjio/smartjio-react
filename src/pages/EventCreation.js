@@ -222,7 +222,7 @@ export default function EventCreation() {
                   tennis
                 </option>
                 <option value="frisbee">
-                  dog sport
+                  frisbee
                 </option>
                 <option value="table tennis">table tennis</option>
                 <option value="tchoukball">

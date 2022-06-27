@@ -11,7 +11,7 @@ import {
   Box,
   // Container,
   // Stack,
-  Text,
+  // Text,
   Image,
   // Flex,
   // VStack,
@@ -62,6 +62,7 @@ export default function Event() {
   const [attendeeDetail, setattendeeDetail] = useState([]); // .map from the above list:  {user_img:"", user_name:"", user_level:""} */
 
   const [myData, setMyData] = useState('');
+  const [time, setTime] = useState("");
   // const participants = []; // try using this unhooked version first. 
   const [participants, setParticipants ]= useState([]);
   const [courtImg, setCourtImg ]= useState('');
@@ -76,10 +77,11 @@ export default function Event() {
       const eventData = await getDoc(eventDocRef);
       if (eventData.exists()) {
         // console.log("query id = ", eventData.data().court_id); // switching this console.log on can actually render more attendees...
-        setMyData(eventData.data());
-        checkParticipants(eventData.data().attendees);
-        getImg(eventData.data().court_id);
-        getOrganiser(eventData.data().organiser);
+        const data = eventData.data();
+        setMyData(data);
+        checkParticipants(data.attendees);
+        getImg(data.court_id);
+        getOrganiser(data.organiser);
         // console.log("query id = ", eventData.data().court_id);
 
         /* setOrganiser(eventData.data().organiser);
@@ -87,6 +89,15 @@ export default function Event() {
         setEventTime(eventData.data().time);
         setActivity(eventData.data().activity);
         setAttendees(eventData.data().attendees);  */
+        const day = data.date.toDate().getDate();
+        const month = data.date.toDate().getMonth();
+        const year = data.date.toDate().getFullYear();
+        const hour = data.date.toDate().getHours();
+        let min = data.date.toDate().getMinutes().toString();
+        while (min.length < 2) {
+          min = "0" + min;
+        }
+        setTime(day + '/' + month + '/' + year + ' at ' + hour + ":" + min);
       } else {
         console.log("error")
         // navigate('/ErrorNotFound')
@@ -101,7 +112,7 @@ export default function Event() {
   // how do we ensure that this occurs only after the first query has occured?
   // console.log("attendanceList = ", myData.attendees); // is correct
   // console.log("attendance Data = ", participants); // only seems to be one person but 4x??? 
-  console.log("tempArray = ", tempArray);
+  // console.log("tempArray = ", tempArray);
 
   const checkParticipants = (myList) => {
     try {
@@ -141,7 +152,7 @@ export default function Event() {
     }
   }; 
 
-  console.log("img data = ", courtImg);
+  // console.log("img data = ", courtImg);
 
   const getOrganiser = async (userId) => {
     try {
@@ -159,10 +170,12 @@ export default function Event() {
 
   // console.log(participants[0]); -> var component = function... best to write it within the return of the export default... idk why
 
+  console.log(myData);
+  console.log(time);
   return (
     <div>
       <NavBar />
-      <Text>{eid}</Text>
+      {/* <Text>{eid}</Text> */}
       <Image src={courtImg.court_image} />
       <Heading>Organiser of Event</Heading>
       <Avatar display_picture={orgInfo.img} user_name={orgInfo.username} player_level={orgInfo.level}/>
@@ -170,7 +183,7 @@ export default function Event() {
         <ListItem>activity: {myData.activity}</ListItem>
         <ListItem>court is: {myData.court_id}</ListItem>
         <ListItem>organiser ID: {myData.organiser}</ListItem>
-        <ListItem>time: {myData.time}</ListItem>
+        <ListItem>time: {time}</ListItem>
       </OrderedList>
       <Wrap>
       {participants.map(function(person) {
