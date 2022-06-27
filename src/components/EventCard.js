@@ -14,7 +14,7 @@ export default function EventCard(props) {
     const [ courtData, setCourtData ] = useState('');
 
     const [ activity, setActivity ] = useState('');
-    const [ time, setTime ] = useState('');
+    const [ date, setDate ] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,10 +24,10 @@ export default function EventCard(props) {
 
             if (eventDocSnap.exists()) {
                 setActivity(eventDocSnap.data().activity);
-                const day = eventDocSnap.data().time.toDate().getDate();
-                const month = eventDocSnap.data().time.toDate().getMonth();
-                const year = eventDocSnap.data().time.toDate().getFullYear();
-                setTime(day + '/' + month + '/' + year);
+                const day = eventDocSnap.data().date.toDate().getDate();
+                const month = eventDocSnap.data().date.toDate().getMonth();
+                const year = eventDocSnap.data().date.toDate().getFullYear();
+                setDate(day + '/' + month + '/' + year);
                 //console.log(eventDocSnap.data().time.toDate().getTime());
                 
                 const court = eventDocSnap.data().court_id;
@@ -84,7 +84,7 @@ export default function EventCard(props) {
           </Heading>
           <Stack direction={'row'} align={'center'}>
             <Text fontWeight={800} fontSize={'xl'}>
-              { time }
+              { date }
             </Text>
           </Stack>
         </Stack>

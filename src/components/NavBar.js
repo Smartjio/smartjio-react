@@ -100,7 +100,7 @@ export default function WithAction() {
                   textDecoration: "none",
                   bg: useColorModeValue("gray.200", "gray.700"),
                 }}
-                href="./"
+                href="/"
               >
                 DashBoard
               </Link>
@@ -112,7 +112,7 @@ export default function WithAction() {
                   textDecoration: "none",
                   bg: useColorModeValue("gray.200", "gray.700"),
                 }}
-                href="./"
+                href={"/profile/" + currentUser.uid}
               >
                 My Profile
               </Link>
@@ -124,7 +124,7 @@ export default function WithAction() {
                   textDecoration: "none",
                   bg: useColorModeValue("gray.200", "gray.700"),
                 }}
-                href="./notification"
+                href="/notification"
               >
                 Notifications
               </Link>
@@ -136,7 +136,7 @@ export default function WithAction() {
                   textDecoration: "none",
                   bg: useColorModeValue("gray.200", "gray.700"),
                 }}
-                href="./activities"
+                href="/activities"
               >
                 Activities
               </Link>
@@ -148,7 +148,7 @@ export default function WithAction() {
                   textDecoration: "none",
                   bg: useColorModeValue("gray.200", "gray.700"),
                 }}
-                href="./settings"
+                href="/settings"
               >
                 Settings
               </Link>
