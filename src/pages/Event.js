@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import Card from '../components/PlayerCard' // maybe you should name properly
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from "../contexts/AuthContext"; // imported useAuth
+// import Card from '../components/PlayerCard' // maybe you should name properly
+import { useParams } from 'react-router-dom';
+// import { useAuth } from "../contexts/AuthContext"; // imported useAuth
 // import { async } from "@firebase/util";
 import { db } from "../firebase.js";
 import Avatar from "../components/AvatarRipple"; // displaying of attendees. 
@@ -9,20 +9,22 @@ import NavBar from "../components/NavBar";
 
 import {
   Box,
-  Container,
-  Stack,
+  // Container,
+  // Stack,
   Text,
   Image,
-  Flex,
-  VStack,
-  Button,
+  // Flex,
+  // VStack,
+  // Button,
   Heading,
-  SimpleGrid,
-  StackDivider,
-  useColorModeValue,
+  // SimpleGrid,
+  // StackDivider,
+  // useColorModeValue,
   Center,
   WrapItem,
   Wrap,
+  OrderedList,
+  ListItem,
 } from '@chakra-ui/react';
 
 // import { FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
@@ -31,21 +33,22 @@ import {
 import {
   collection,
   getDoc,
-  updateDoc,
+  // updateDoc,
   doc,
-} from "firebase/firestore"; // for CRUD with firebase
+} from "firebase/firestore"; 
+
+// the order of your functions matter alot. 
 
 export default function Event() {
   /* when we arrive at this page from another page, we need to input parameters into this page before we can query the event */
-  const navigate = useNavigate(); // use nav to go from page to another page.
-  const { currentUser } = useAuth(); // need this for join event function. 
-  console.log(currentUser);
+  // const { currentUser } = useAuth(); // need this for join event function. 
+  // console.log(currentUser);
   // const myID = currentUser.uid; never fking do this
-  console.log("current User = ", currentUser.uid);
+  // console.log("current User = ", currentUser.uid);
   const { eid } = useParams(); // instead of let and var
-  console.log("event id = ", eid); // working
+  // console.log("event id = ", eid); // working
 
-  const [courtImage, setCourtImage] = useState("");
+/*   const [courtImage, setCourtImage] = useState("");
   const [courtRegion, setCourtRegion] = useState("");
   const [courtName, setCourtName] = useState("");
 
@@ -56,23 +59,34 @@ export default function Event() {
   const [eventTime, setEventTime] = useState(""); // just a string for now, will change into Date() object in future
 
   const [attendees, setAttendees] = useState([]); // array of UID which will then loop through to create the avatars.
-  const [attendeeDetail, setattendeeDetail] = useState([]); // .map from the above list:  {user_img:"", user_name:"", user_level:""}
+  const [attendeeDetail, setattendeeDetail] = useState([]); // .map from the above list:  {user_img:"", user_name:"", user_level:""} */
 
+  const [myData, setMyData] = useState('');
+  // const participants = []; // try using this unhooked version first. 
+  const [participants, setParticipants ]= useState([]);
+  const [courtImg, setCourtImg ]= useState('');
+  const [orgInfo, setOrgInfo] = useState('');
+
+  let tempArray = [] // go through step by step how the whole page should render. 
 
   useEffect(() => {
     const getEvent = async () => {
       const eventsCollectionRef = collection(db, "events");
       const eventDocRef = doc(eventsCollectionRef, eid); // can just .id? 
       const eventData = await getDoc(eventDocRef);
-      // why is my query not even working? 
-      console.log("query 1 = ", eventsCollectionRef);
       if (eventData.exists()) {
-        console.log("query for organiser = ", eventData.data().organiser);
-        setOrganiser(eventData.data().organiser);
+        // console.log("query id = ", eventData.data().court_id); // switching this console.log on can actually render more attendees...
+        setMyData(eventData.data());
+        checkParticipants(eventData.data().attendees);
+        getImg(eventData.data().court_id);
+        getOrganiser(eventData.data().organiser);
+        // console.log("query id = ", eventData.data().court_id);
+
+        /* setOrganiser(eventData.data().organiser);
         setCourtId(eventData.data().court_id);
         setEventTime(eventData.data().time);
         setActivity(eventData.data().activity);
-        setAttendees(eventData.data().attendees); 
+        setAttendees(eventData.data().attendees);  */
       } else {
         console.log("error")
         // navigate('/ErrorNotFound')
@@ -81,10 +95,104 @@ export default function Event() {
     }; 
 
     getEvent();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line 
+  }, [eid]);
 
-  console.log("courtId = ", courtId);
+  // how do we ensure that this occurs only after the first query has occured?
+  // console.log("attendanceList = ", myData.attendees); // is correct
+  // console.log("attendance Data = ", participants); // only seems to be one person but 4x??? 
+  console.log("tempArray = ", tempArray);
+
+  const checkParticipants = (myList) => {
+    try {
+      myList.forEach(element => {
+        queryParticipants(element);
+      });  
+      setParticipants(tempArray); // not sure why it renders so many x of attendees... should be useEffect rendering. 
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const queryParticipants = async (person) => {
+    const docRef = doc(collection(db, "users"), person); // can just currentUser.uid -> reading properties of undefined 
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      // tempArray = [...tempArray, docSnap.data()]
+      // tempArray.push(docSnap.data());
+      // setParticipants([...participants, docSnap.data()]);
+      setParticipants(participants => [...participants, docSnap.data()]);
+      setParticipants(participants => [...new Set(participants)]);
+      // console.log("within my loop in queries", docSnap.data());
+      // addPerson(docSnap.data());
+    } else {
+      console.log("error user not found");
+    }
+  }
+
+  const getImg = async (courtId) => {
+    try{
+      const imgDocRef = doc(collection(db, "courts"), courtId); // can just .id? 
+      const imgData = await getDoc(imgDocRef);
+      console.log("query img = ", imgData.data()); // not working...
+      setCourtImg(imgData.data().court_image);
+    } catch (error) {
+      console.log(error);
+    }
+  }; 
+
+  console.log("img data = ", courtImg);
+
+  const getOrganiser = async (userId) => {
+    try {
+      const orgDocRef = doc(collection(db, "users"), userId);
+      const orgData = await getDoc(orgDocRef);
+      console.log("query org = ", orgData.data());
+      setOrgInfo(orgData.data());
+    } catch (error) {
+      console.log(error);
+    }
+  }; 
+
+  // useEffect happens after every render -> keeps adding people to the list... thats why so many extra pieces in your list. 
+  // but without useEffect, myData.forEach runs forever... 
+
+  // console.log(participants[0]); -> var component = function... best to write it within the return of the export default... idk why
+
+  return (
+    <div>
+      <NavBar />
+      <Text>{eid}</Text>
+      <Image src={courtImg.court_image} />
+      <Heading>Organiser of Event</Heading>
+      <Avatar display_picture={orgInfo.img} user_name={orgInfo.username} player_level={orgInfo.level}/>
+      <OrderedList>
+        <ListItem>activity: {myData.activity}</ListItem>
+        <ListItem>court is: {myData.court_id}</ListItem>
+        <ListItem>organiser ID: {myData.organiser}</ListItem>
+        <ListItem>time: {myData.time}</ListItem>
+      </OrderedList>
+      <Wrap>
+      {participants.map(function(person) {
+    // console.log("inside the loop = ", person); // runs
+    return (
+      <WrapItem key={person}>
+        <Box>
+          <Center>
+            <Avatar display_picture={person.img} user_name={person.username} player_level={person.level}/>
+          </Center>
+          {/* <Image src={person.img} />
+          <Heading>player name: {person.username}</Heading>
+          <Heading>player level: {person.level}</Heading> */}
+        </Box>
+      </WrapItem>
+    )
+  })}
+      </Wrap>
+    </div>
+  )
+
+/*   console.log("courtId = ", courtId);
   console.log("activity = ", activity);
   console.log("organiser = ", organiser);
   console.log("eventTime = ", eventTime);
@@ -226,14 +334,14 @@ export default function Event() {
                 />
               }>
               <VStack spacing={{ base: 4, sm: 6 }}>
-                {/* <Text
+                 <Text
                   color={useColorModeValue('gray.500', 'gray.400')}
                   fontSize={'2xl'}
                   fontWeight={'300'}>
                   {props.comments}
-                </Text> */}
+                </Text> 
                 <Text fontSize={'lg'}>
-                  {/* Date: {props.date} */}
+                  {/* Date: {props.date} }
                   Time: {eventTime}
                 </Text>
 
@@ -251,7 +359,7 @@ export default function Event() {
                   Event Organiser
                 </Text>
                 {theOrganiser}
-                {/* card for organiser. */}
+              
               </Box>
               </VStack>
   
@@ -272,12 +380,11 @@ export default function Event() {
                 
               }}
               onClick={() => joinEvent(eid, attendees)} >
-              Join event
-              {/* onClick, adds yourself to the event! */}
+              Join event: onClick, adds yourself to the event!
             </Button>
           </Stack>
         </SimpleGrid>
       </Container> 
     </div>
-  )
+  ) */
 }
