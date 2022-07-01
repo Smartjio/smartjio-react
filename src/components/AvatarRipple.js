@@ -1,5 +1,14 @@
 import React from "react";
-import { Avatar, Box, Center, Flex, keyframes, Container } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Center,
+  Flex,
+  keyframes,
+  Container,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 
 export default function AvatarRipple(props) {
   const { display_picture, user_name, player_level } = props;
@@ -58,9 +67,10 @@ export default function AvatarRipple(props) {
         </Box>
       </Flex>
       <Center>
-        <text>
-          {user_name}: {player_level}
-        </text>
+        <VStack>
+          <Text>{user_name}</Text>
+          <Text>Level : {player_level}</Text>
+        </VStack>
       </Center>
     </Container>
   );
