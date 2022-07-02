@@ -8,7 +8,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { Box, Center, Heading, VStack, Image } from "@chakra-ui/react";
+import { Box, Center, Heading, VStack, Image, Tabs, TabList, TabPanels, Tab, TabPanel, Flex, Text, Spacer, Button, ButtonGroup } from "@chakra-ui/react";
 
 import NavBar from "../components/NavBar";
 import { db } from "../firebase";
@@ -22,8 +22,7 @@ export default function Notifications() {
   const { currentUser } = useAuth();
   const myId = currentUser.uid;
   const [myNotifications, setMyNotifications] = useState([]);
-  // const [allDetails, setAllDetails] = useState([]);
-  // const [finalDetails, setFinalDetails] = useState([]);
+  const [friendRequests, setFriendRequests] = useState([]);
 
   useEffect(() => {
     const getNotifications = async () => {
@@ -40,21 +39,22 @@ export default function Notifications() {
           // setMyNotifications([...myNotifications, doc.data()]);
         });
         const newArray = tempArray.map(
-          (elem) => queryWithinLoop(elem) // this function now returns a promise?
+          (elem) => queryWithinLoop(elem) // function returns a promise
         ); //.map(elem => elem.then(value => { return value }).catch(err => { console.log(err) }));
         // deal with promises
-        const promiseSolver = Promise.all(newArray).then((values) => {return values});
+        const promiseSolver = Promise.all(newArray).then((values) => {
+          return values;
+        });
         const anotherArray = await promiseSolver;
         // console.log("settle the kettle = ", anotherArray); GREAT SUCCCESS
-        setMyNotifications(anotherArray); 
+        setMyNotifications(anotherArray);
       } catch (error) {
         console.log(error);
       }
     };
-    getNotifications(); 
-  }, []); // everytime currentUser is called / rendered, this useEffect will be triggered -> so remove it totally.
-
-  console.log("inside of my []", myNotifications); // why tf is this a promise?
+    getNotifications();
+    console.log("inside of my []", myNotifications);
+  }, []); // just disable the warning. 
 
   const queryWithinLoop = async (elem) => {
     // maybe this shouldnt be an async function since it resides within another async function => resulting in a promise return
@@ -81,33 +81,138 @@ export default function Notifications() {
     }
   };
 
-  /* useEffect(() => {
-    // unpacking the promise in myNotifications
-    const getDetails = async () => {
-        try {
-            const value = await p;
-            console.log(value); // 👉️ "Hello World"
-          } catch (err) {
-            console.log(err);
-          }
+  function InvitationsTab() {
+    return(
+        myNotifications.map((notify) => {
+            // (notify, index) in the event that the keys of each need to be distinct. 
+            return (
+              <Box
+                bg="silver"
+                w="80%"
+                p={4}
+                color="black"
+                align="center"
+                borderWidth="1px"
+                borderRadius="lg"
+                key={notify.event_id}
+              >
+                <Flex minWidth='min-content' alignItems='center' gap='2'>
+                <Box p='2'>
+                <Image
+                    borderRadius='full'
+                    boxSize='150px'
+                    src={notify.sender_image}
+                    alt={notify.sender_name}
+                    fallbackSrc='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKaiKiPcLJj7ufrj6M2KaPwyCT4lDSFA5oog&usqp=CAU'
+                    />
+                </Box>
+                <Box p='2'>
+                    <Text fontSize='md'>
+                    {notify["sender_name"]} send you a game invite of {notify.event_activity} at {notify.event_venue} 
+                    </Text>
+                </Box>
+                <Spacer />
+                <ButtonGroup gap='2'>
+                    <Button colorScheme='teal'>Accept</Button>
+                    <Button colorScheme='teal'>Decline</Button>
+                </ButtonGroup>
+                </Flex>
+                {/* <h1>Sender username: {notify["sender_name"]}</h1>
+                <h1>Sender IMG:</h1>
+                <Image src={notify.sender_image} />
+                <h1>Sender lvl: {notify.sender_level}</h1>
+                <h1>what activity: {notify.event_activity}</h1>
+                <h1>Event Venue: {notify.event_venue}</h1>
+                <h1>Event Organiser: {notify.event_organiser}</h1> */}
+              </Box>
+            );
+          })
+    );
+  }
+
+  useEffect(() => {
+    const getFriendRequests = async () => {
+        const tempArray = [];
+        try {      
+            const myQuery = query(
+                collection(db, "friendRequest"),
+                where("request_to", "==", myId)
+              );
+              const queryResults = await getDocs(myQuery);
+              queryResults.forEach((doc) => {
+                tempArray.push(doc.data());
+              });
+              // console.log("temp array is..., ", tempArray);
+              setFriendRequests(tempArray);
+        } catch (error) {
+            console.log(error);
+        }
     };
-    const temp = [];
-    myNotifications.forEach(val => {
-        console.log("in my loop = ", val);
-    }); 
-    console.log("my temp = ", temp);
-    setAllDetails(temp); 
-  }, []); */
+    getFriendRequests();
+    console.log("friend requests", friendRequests);
+    }, []);
+
+    function BefriendTab() {
+        return (friendRequests.length === 0 ? 
+            <Heading> 
+                You currently have no friend requests
+            </Heading> 
+            :
+            friendRequests.map((req) => {
+                return (req.friends_already ?
+                    <Heading>
+                        make this into saying you and so and so are friends!
+                    </Heading> 
+                    :
+                    <Heading>
+                        make this into a friend req PrivateOutlet
+                    </Heading>
+                );
+            })
+            );
+            // make this clickable so that you go to the user profile page. 
+    }
+
+    // i have four buttons and functions to make -> accept invite, decline invite, accept friend and reject friend -> handleOnClick four times!!
+
 
   return (
     <div>
       <NavBar />
       <Center>
-        <Heading>Notifications</Heading>
+        <Heading>My Notifications</Heading>
       </Center>
 
-      <VStack>
-        {myNotifications.map((notify, index) => {
+      <Tabs isFitted variant="enclosed" variant='soft-rounded' colorScheme='green'>
+        <TabList mb="1em">
+          <Tab>Event Invitations</Tab>
+          <Tab>Friend Requests</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+          <VStack>
+        <InvitationsTab />
+        <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
+          <AvatarRipple
+            display_picture=""
+            user_name="{props.sender_name}"
+            player_level="{props.sender_level}"
+          />
+        </Box>
+      </VStack>
+          </TabPanel>
+          <TabPanel>
+            <BefriendTab />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+
+    </div>
+  );
+}
+
+
+/*         {myNotifications.map((notify, index) => {
           return (
             <Box
               bg="silver"
@@ -121,37 +226,4 @@ export default function Notifications() {
               <h1>event UID: {notify.event_id}</h1>
             </Box>
           );
-        })}
-        {myNotifications.map((notify) => {
-            console.log("a single notification be like = ",notify);
-          return (
-            <Box
-              bg="silver"
-              w="50%"
-              p={4}
-              color="black"
-              align="center"
-              // key={index}
-            >
-              <h1>Sender username: {notify["sender_name"]}</h1>
-              <h1>Sender IMG:</h1> 
-              <Image src={notify.sender_image} />
-              <h1>Sender lvl: {notify.sender_level}</h1>
-              <h1>what activity: {notify.event_activity}</h1>
-              <h1>Event Venue: {notify.event_venue}</h1>
-              <h1>Event Organiser: {notify.event_organiser}</h1>
-            </Box>
-            // <AvatarRipple display_picture={notify.sender_image} user_name={notify.sender_name} player_level={notify.sender_level}/> 
-          );
-        })}
-        <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
-          <AvatarRipple
-            display_picture=""
-            user_name="{props.sender_name}"
-            player_level="{props.sender_level}"
-          />
-        </Box>
-      </VStack>
-    </div>
-  );
-}
+        })} */
