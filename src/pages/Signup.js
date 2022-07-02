@@ -14,6 +14,7 @@ import {
     Text,
     useColorModeValue,
     Link,
+    Alert,
   } from '@chakra-ui/react';
 import { Link as ReactLink, useNavigate } from 'react-router-dom'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
@@ -41,9 +42,27 @@ export default function Signup() {
         try {
             await signup(emailRef.current.value, passwordRef.current.value)
             navigate("/create")
-        } catch {
-            setError('Failed to create an account')
-            console.log(error)
+        } catch (err) {
+            handleErrorSignup(err);
+            // console.log(err.code);
+            // console.log(err.message);
+            console.log(error);
+        }
+    }
+
+    function handleErrorSignup(err) {
+        switch (err.code) {
+            case 'auth/email-already-in-use':
+                setError('This email is already taken. Please use another email.');
+                break;
+            case 'auth/invalid-email':
+                setError('Please input a valid email.');
+                break;
+            case 'auth/weak-password':
+                setError('Please use a password with at least 6 characters.');
+                break;
+            default:
+                setError(err.message);
         }
     }
 
@@ -65,6 +84,7 @@ export default function Signup() {
             boxShadow={'lg'}
             p={8}>
             <Stack spacing={4}>
+                {error && <Alert status="error"> {error} </Alert>}
                 <FormControl id="email" isRequired>
                 <FormLabel>Email address</FormLabel>
                 <Input type="email" ref={emailRef}/>
@@ -98,6 +118,7 @@ export default function Signup() {
                     </Button>
                     </InputRightElement>
                 </InputGroup>
+
                 </FormControl>
                 <Stack spacing={10} pt={2}>
                 <Button
