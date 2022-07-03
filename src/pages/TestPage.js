@@ -1,12 +1,12 @@
 import React from 'react'
-import SideBar from '../components/SideBar';
-
-const myTest = <SideBar />
+// import SideBar from '../components/SideBar';
+import PostMyComment from "../components/PostComment";
 
 export default function TestPage() {
   return (
     <div>
-        {myTest}
+        this is the testpage
+        <PostMyComment />
     </div>
   )
 }

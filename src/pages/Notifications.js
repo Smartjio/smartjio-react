@@ -8,7 +8,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { Box, Center, Heading, VStack, Image, Tabs, TabList, TabPanels, Tab, TabPanel, Flex, Text, Spacer, Button, ButtonGroup } from "@chakra-ui/react";
+import { Box, Center, Heading, VStack, Image, Tabs, TabList, TabPanels, Tab, TabPanel, Flex, Text, Spacer, Button, ButtonGroup, Container, /* AspectRatio */ } from "@chakra-ui/react";
 
 import NavBar from "../components/NavBar";
 import { db } from "../firebase";
@@ -65,6 +65,7 @@ export default function Notifications() {
     };
     getNotifications();
     console.log("inside of my []", myNotifications);
+    // eslint-disable-next-line
   }, []); // just disable the warning. 
 
   const queryWithinLoop = async (elem) => {
@@ -92,7 +93,7 @@ export default function Notifications() {
         temp["court_img"] = myCourtDoc.data().court_image
         temp["court_name"] = myCourtDoc.data().court_name
         temp["region"] = myCourtDoc.data().region
-        console.log("deepest loop = ", temp);
+        // console.log("deepest loop = ", temp);
         return temp;
       } else {
         console.log("Error");
@@ -102,7 +103,7 @@ export default function Notifications() {
     }
   };
 
-  const getCourtData = async (elem) => {
+  /* const getCourtData = async (elem) => {
     const courtDoc = doc(collection(db, "courts"), String(elem.event_venue)); // Firebase document id are Strings!!!
     const myCourtDoc = await getDoc(courtDoc);
     if (myCourtDoc.exists()) {
@@ -117,16 +118,16 @@ export default function Notifications() {
     } else {
       console.log("Error");
     }
-  };
+  }; */
 
   function InvitationsTab() {
-    async function navigateEvent(e) {
+    /* async function navigateEvent(e) {
         try {
           await navigate("/");
         } catch (error) {
           console.log(error);
         }
-      }
+      } */
 
     return(
         myNotifications.map((notify) => {
@@ -143,28 +144,63 @@ export default function Notifications() {
                 key={notify.id} // notify.event_id
               >
                 <Flex minWidth='min-content' alignItems='center' gap='2'>
-                <Box p='2'>
-                <Image
-                    borderRadius='full'
-                    boxSize='150px'
-                    src={notify.sender_image}
-                    alt={notify.sender_name}
-                    fallbackSrc='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKaiKiPcLJj7ufrj6M2KaPwyCT4lDSFA5oog&usqp=CAU'
-                    onClick={async (event) => {
-                        try {
-                          await navigate("/");
-                        } catch (error) {
-                          console.log(error);
-                        }
-                      }}
-                    />
-                </Box>
-                <Box p='2'>
+                <Container p='2' align="left">
+                    <VStack>
+                        <Image
+                        borderRadius='full'
+                        boxSize='150px'
+                        src={notify.sender_image}
+                        alt={notify.sender_name}
+                        fallbackSrc='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKaiKiPcLJj7ufrj6M2KaPwyCT4lDSFA5oog&usqp=CAU'
+                        onClick={async (event) => {
+                            try {
+                            await navigate("/");
+                            } catch (error) {
+                            console.log(error);
+                            }
+                        }}
+                        />
+                        <Text>{notify["sender_name"]}</Text>
+                    </VStack>
+                </Container>
+                <Spacer />
+                <Box p='2' 
+                onClick={async (event) => {
+                            try {
+                            await navigate("/event/" + notify.event_id);
+                            } catch (error) {
+                            console.log(error);
+                            }
+                        }}
+                        >
                     <Text fontSize='md'>
-                    {notify["sender_name"]} send you a game invite of {notify.event_activity} at {notify.event_venue} 
+                    sent you a game invite of {notify.event_activity} at
                     </Text>
                 </Box>
                 <Spacer />
+                <Container p='2' align="left">
+                    <VStack>
+                        <Image 
+                            boxSize='160px'
+                            borderRadius='lg'
+                            src={notify.court_img}
+                            alt={notify.court_name}
+                            objectFit='cover'
+                            fallbackSrc='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxzhiYqbWHirZnGuIc6_ZxdRjfABlGEpvqmw&usqp=CAU'
+                            onClick={async (event) => {
+                                try {
+                                await navigate("/court/" + notify.event_venue);
+                                } catch (error) {
+                                console.log(error);
+                                }
+                            }}
+                            />
+                        <Text>{notify.court_name}  ({notify.region})</Text>
+                    </VStack>
+                </Container>
+
+                <Spacer />
+
                 <ButtonGroup gap='2'>
                     <Button colorScheme='teal'>Accept</Button>
                     <Button colorScheme='teal'>Decline</Button>
@@ -211,6 +247,7 @@ export default function Notifications() {
     };
     getFriendRequests();
     console.log("friend requests", friendRequests);
+    // eslint-disable-next-line
     }, []);
 
     const getFriendData = async (elem) => {
@@ -289,6 +326,15 @@ export default function Notifications() {
             // make this clickable so that you go to the user profile page. 
     }
 
+    /* const updateAsFriends = async (id) => {
+        const userDoc = doc(db, "users", id);
+        const myDoc = doc(db, "users", myId);
+        const newFieldsThem = { age: age + 1 };
+        const newFieldsMe = { age: age + 1 };
+        await updateDoc(userDoc, newFields);
+      }; */
+      // add the other guys uid to your array of friends and vice versa. 
+
     // i have four buttons and functions to make -> accept invite, decline invite, accept friend and reject friend -> handleOnClick four times!!
 
 
@@ -296,10 +342,10 @@ export default function Notifications() {
     <div>
       <NavBar />
       <Center>
-        <Heading>My Notifications</Heading>
+        <Heading p='2'>My Notifications</Heading>
       </Center>
 
-      <Tabs isFitted variant="enclosed" variant='soft-rounded' colorScheme='green'>
+      <Tabs isFitted variant='soft-rounded' colorScheme='green'>
         <TabList mb="1em">
           <Tab>Event Invitations</Tab>
           <Tab>Friend Requests</Tab>
