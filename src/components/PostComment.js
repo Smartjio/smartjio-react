@@ -41,7 +41,7 @@ export default function PostComment(props) {
     };
     let handleClickToPost = () => {
         if (value === "") {
-            // do nothing?
+            // do nothing? make it unclickable if possible.
             console.log("ye cant submit an empty comment");
             // make an alert? 
         } else {

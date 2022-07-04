@@ -2,12 +2,10 @@ import NavBar from "../components/NavBar";
 import { React, /* ReactElement */ useEffect, useState } from "react";
 import { db } from "../firebase.js";
 import { useParams } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
 import PostMyComment from "../components/PostComment";
 
 import {
   Box,
-  Wrap,
   Text,
   Heading,
   Stack,
@@ -15,38 +13,27 @@ import {
   SimpleGrid,
   Avatar,
   Badge,
-  // Container,
   Flex,
   Image,
-  // StackDivider,
-  // Button,
-  // Input,
-  // InputRightAddon,
-  Textarea,
-  InputGroup,
   AspectRatio,
   Center,
-  HStack,
   VStack,
-  Container,
 } from "@chakra-ui/react";
 
-import { collection, getDoc, updateDoc, doc } from "firebase/firestore";
-// import { Button } from "bootstrap";
+import { collection, getDoc, doc } from "firebase/firestore";
 
+// need to refresh page when i post a comment!
 
 export default function Court() {
   const { cid } = useParams();
-  const { currentUser } = useAuth(); // for adding your own comments 
-  const myId = currentUser.uid;
-  // const [ currentUserInfo, setCurrentUserInfo ] = useState('');
-  // console.log(cid);
+  // const { currentUser } = useAuth(); // for adding your own comments 
+  // const myId = currentUser.uid;
   const [courtData, setCourtData] = useState(''); // everything about the court. 
   const [commentData, setCommentData] = useState([]); // for userImage etc 
 
   useEffect(() => {
     const getCourtDoc = async () => {
-      const courtDocRef = doc(collection(db, "courts"), cid); // can just .id?
+      const courtDocRef = doc(collection(db, "courts"), cid); 
       const theCourtData = await getDoc(courtDocRef);
       if (theCourtData.exists()) {
         setCourtData(theCourtData.data());
@@ -87,14 +74,14 @@ export default function Court() {
   }
 
 
-  function SingleComment(props) {
+  /* function SingleComment(props) {
     return (
       // do your thang... style quickly.
       <div>
         nada
       </div>
-    )
-  }
+    ) abstraction principle has left the chat
+  } */
 
   return (
     <div>

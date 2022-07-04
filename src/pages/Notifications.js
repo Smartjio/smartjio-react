@@ -2,11 +2,13 @@ import { React, useState, useEffect, /* useCallback */ } from "react";
 import {
   collection,
   getDoc,
-  // updateDoc,
+  updateDoc,
   doc,
   query,
   where,
   getDocs,
+  deleteDoc,
+  addDoc,
 } from "firebase/firestore";
 import { Box, Center, Heading, VStack, Image, Tabs, TabList, TabPanels, Tab, TabPanel, Flex, Text, Spacer, Button, ButtonGroup, Container, /* AspectRatio */ } from "@chakra-ui/react";
 
@@ -17,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Notifications() {
   const { currentUser } = useAuth();
+  // console.log(currentUser);
   const myId = currentUser.uid;
   const [myNotifications, setMyNotifications] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
@@ -33,8 +36,10 @@ export default function Notifications() {
         );
         const queryResults = await getDocs(myQuery);
         queryResults.forEach((doc) => {
-          // console.log("inside the query loop", doc.data()); // ran 2x instead of 1x
-          tempArray.push(doc.data());
+          const tempObject = doc.data()
+          tempObject.docId = doc.id;
+          // console.log("can access the document ID? = ", tempObject); // ran 2x instead of 1x
+          tempArray.push(tempObject);
           // setMyNotifications([...myNotifications, doc.data()]);
         });
         const secondArray = tempArray.map(
@@ -45,7 +50,7 @@ export default function Notifications() {
           return values;
         });
         const thirdArray = await promiseSolver;
-        console.log("this is the third array already = ", thirdArray);
+        // console.log("this is the third array = ", thirdArray);
         setMyNotifications(thirdArray);
         // now we get the court data without introducing more wrappings of promises 
         /* const fourthArray = thirdArray.map(
@@ -64,9 +69,10 @@ export default function Notifications() {
       }
     };
     getNotifications();
-    console.log("inside of my []", myNotifications);
+    // console.log("inside of my []", myNotifications); this runs first, followed by what it is called within function above.
+
     // eslint-disable-next-line
-  }, []); // just disable the warning. 
+  }, []); // myId can be included so that the page will refresh?? 
 
   const queryWithinLoop = async (elem) => {
     // maybe this shouldnt be an async function since it resides within another async function => resulting in a promise return
@@ -83,6 +89,8 @@ export default function Notifications() {
         event_venue: myEventDoc.data().court_id,
         event_time: myEventDoc.data().time,
         event_organiser: myEventDoc.data().organiser,
+        attendance: myEventDoc.data().attendees,
+        docId: elem.docId,
         sender: elem.sender,
         event_id: elem.event_id,
       };
@@ -121,15 +129,31 @@ export default function Notifications() {
   }; */
 
   function InvitationsTab() {
-    /* async function navigateEvent(e) {
-        try {
-          await navigate("/");
-        } catch (error) {
-          console.log(error);
-        }
-      } */
+    // buttons for handling events
+    const updateAcceptEvent = async (event_id, participants, notificationId) => {
+        const eventDoc = doc(db, "events", event_id);
+        const tempArray = participants.concat([myId]); // participants should be an Array. 
+        const newFields = { attendees: tempArray };
+        await updateDoc(eventDoc, newFields); // cannot send invite to people who are already in the event -> event and jio page take note. 
+        // for deleting the notification
+        const notificationDoc = doc(db, "notification", notificationId);
+        await deleteDoc(notificationDoc); 
+    };
 
-    return(
+    const updateDeclineEvent = async (notificationId) => {
+        const notificationDoc = doc(db, "notification", notificationId);
+        await deleteDoc(notificationDoc);
+    };
+
+    /* const handleClickAccept = () => {
+        need this when i figure out how to rerender notifications after the button has been clicked. 
+    }; */
+
+    return( myNotifications.length === 0 ? 
+        <Heading> 
+            You currently have no notifications
+        </Heading> 
+        :
         myNotifications.map((notify) => {
             // (notify, index) just use the doc id, since they are definitely unique.
             return (
@@ -202,17 +226,10 @@ export default function Notifications() {
                 <Spacer />
 
                 <ButtonGroup gap='2'>
-                    <Button colorScheme='teal'>Accept</Button>
-                    <Button colorScheme='teal'>Decline</Button>
+                    <Button colorScheme='teal' onClick={() => updateAcceptEvent(notify.event_id, notify.attendance, notify.docId)}>Accept</Button>
+                    <Button colorScheme='teal' onClick={() => updateDeclineEvent(notify.docId)}>Decline</Button>
                 </ButtonGroup>
                 </Flex>
-                {/* <h1>Sender username: {notify["sender_name"]}</h1>
-                <h1>Sender IMG:</h1>
-                <Image src={notify.sender_image} />
-                <h1>Sender lvl: {notify.sender_level}</h1>
-                <h1>what activity: {notify.event_activity}</h1>
-                <h1>Event Venue: {notify.event_venue}</h1>
-                <h1>Event Organiser: {notify.event_organiser}</h1> */}
               </Box>
             );
           })
@@ -229,7 +246,11 @@ export default function Notifications() {
               );
               const queryResults = await getDocs(myQuery);
               queryResults.forEach((doc) => {
-                tempArray.push(doc.data());
+                // tempArray.push(doc.data());
+                const tempObject = doc.data()
+                tempObject.docId = doc.id; // adds docId attribute. 
+                // console.log("can access the document ID? = ", tempObject); 
+                tempArray.push(tempObject);
               });
               // console.log("temp array is..., ", tempArray);
               const newArray = tempArray.map(
@@ -258,6 +279,7 @@ export default function Notifications() {
             sender_name: myUserDoc.data().username,
             sender_image: myUserDoc.data().img,
             sender_level: myUserDoc.data().level,
+            docId: elem.docId,
             request_from: elem.request_from,
             friends_already: elem.friends_already,
         };
@@ -268,15 +290,58 @@ export default function Notifications() {
         }
     };
 
-    function BefriendTab() {
+    // getFriendArray literally gets the array of friends so as to updateDoc it within the BeFriendTab. 
+    const getFriendArray = async (user_id) => {
+        const userDoc = doc(collection(db, "users"), user_id);
+        const myUserDoc = await getDoc(userDoc);
+        if (myUserDoc.exists()) {
+            if (myUserDoc.data().friends === undefined) {
+                console.log("friend Array = ", myUserDoc.data().friends); // works, but 
+                return [];
+            } else if (myUserDoc.data().friends.length === 1 && myUserDoc.data().friends[0] === "") {
+                return [];
+            } else {
+                return myUserDoc.data().friends;
+                // console.log("this are his / my friends ", myUserDoc.data().friends); 
+                // returns an array. 
+            }
+        } else {
+            console.log("Error");
+        }
+    };
+
+    function BeFriendTab() {
+        // update document
+        const updateAsFriends = async (friend_id) => {
+            const yourCurrentFriends = await getFriendArray(friend_id); // await should solve the promise issue
+            const tempArray = yourCurrentFriends.concat([myId]);
+            const userDoc = doc(db, "users", friend_id);
+            const newFields = { friends: tempArray }; // will create field when there are no fields? probable bug. 
+            const myCurrentFriends = await getFriendArray(myId);
+            const myTempArray = myCurrentFriends.concat([friend_id]); // mine is opposite to that of my friend.
+            const myDoc = doc(db, "users", myId);
+            const myNewFields = { friends: myTempArray };
+            await updateDoc(userDoc, newFields);
+            await updateDoc(myDoc, myNewFields);
+            // creates a new notification telling your new friend that you are now friends 
+            await addDoc(collection(db, "friendRequest"), { friends_already: true, request_from: myId, request_to: friend_id });
+        };
+
+        const declineFriendRequest = async (notificationId) => {
+            // either get the document id or where(request_from and request_to are you and your friend respectively) 
+            const notificationDoc = doc(db, "notification", notificationId);
+            await deleteDoc(notificationDoc);
+        };
+
         return (friendRequests.length === 0 ? 
-            <Heading> 
+            <Heading> ``
                 You currently have no friend requests
             </Heading> 
             :
             friendRequests.map((req) => {
                 return (req.friends_already ?
-                    <Heading key={req.id}>
+                    // no idea what req.id means.
+                    <Heading key={req.id}> 
                         make this into saying you and so and so are friends!
                     </Heading> 
                     :
@@ -315,8 +380,8 @@ export default function Notifications() {
                         </Box>
                         <Spacer />
                         <ButtonGroup gap='2'>
-                            <Button colorScheme='teal'>Accept</Button>
-                            <Button colorScheme='teal'>Decline</Button>
+                            <Button colorScheme='teal' onClick={() => updateAsFriends(req.request_from)}>Accept</Button>
+                            <Button bg='maroon' color='white' onClick={() => declineFriendRequest(req.docId)}>Decline</Button>
                         </ButtonGroup>
                         </Flex>
                     </Box>
@@ -326,16 +391,7 @@ export default function Notifications() {
             // make this clickable so that you go to the user profile page. 
     }
 
-    /* const updateAsFriends = async (id) => {
-        const userDoc = doc(db, "users", id);
-        const myDoc = doc(db, "users", myId);
-        const newFieldsThem = { age: age + 1 };
-        const newFieldsMe = { age: age + 1 };
-        await updateDoc(userDoc, newFields);
-      }; */
       // add the other guys uid to your array of friends and vice versa. 
-
-    // i have four buttons and functions to make -> accept invite, decline invite, accept friend and reject friend -> handleOnClick four times!!
 
 
   return (
@@ -354,19 +410,12 @@ export default function Notifications() {
           <TabPanel>
           <VStack>
         <InvitationsTab />
-        {/* <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
-          <AvatarRipple
-            display_picture=""
-            user_name="{props.sender_name}"
-            player_level="{props.sender_level}"
-          />
-        </Box> */}
       </VStack>
           </TabPanel>
           <TabPanel>
 
           <VStack>
-          <BefriendTab />
+          <BeFriendTab />
           </VStack>
 
           </TabPanel>
