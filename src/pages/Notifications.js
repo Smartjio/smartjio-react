@@ -111,23 +111,6 @@ export default function Notifications() {
     }
   };
 
-  /* const getCourtData = async (elem) => {
-    const courtDoc = doc(collection(db, "courts"), String(elem.event_venue)); // Firebase document id are Strings!!!
-    const myCourtDoc = await getDoc(courtDoc);
-    if (myCourtDoc.exists()) {
-      const temp = {
-        ...elem, 
-        court_img: myCourtDoc.data().court_image,
-        court_name: myCourtDoc.data().court_name,
-        region: myCourtDoc.data().region,
-      }
-      // console.log("deepest loop = ", temp);
-      return temp;
-    } else {
-      console.log("Error");
-    }
-  }; */
-
   function InvitationsTab() {
     // buttons for handling events
     const updateAcceptEvent = async (event_id, participants, notificationId) => {
@@ -341,9 +324,46 @@ export default function Notifications() {
             friendRequests.map((req) => {
                 return (req.friends_already ?
                     // no idea what req.id means.
-                    <Heading key={req.id}> 
-                        make this into saying you and so and so are friends!
-                    </Heading> 
+                    // this is to show thatsomeone has accepted your friend request. 
+                    <Box
+                        bg="silver"
+                        w="80%"
+                        p={4}
+                        color="black"
+                        align="center"
+                        borderWidth="1px"
+                        borderRadius="lg"
+                        key={req.id}
+                    >
+                        <Flex minWidth='min-content' alignItems='center' gap='2'>
+                        <Box p='2'>
+                        <Image
+                            borderRadius='full'
+                            boxSize='150px'
+                            src={req.sender_image}
+                            alt={req.sender_name}
+                            fallbackSrc='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKaiKiPcLJj7ufrj6M2KaPwyCT4lDSFA5oog&usqp=CAU'
+                            onClick={async (event) => {
+                                try {
+                                await navigate("/");
+                                } catch (error) {
+                                console.log(error);
+                                }
+                                // make this into a friend req PrivateOutlet
+                            }}
+                            />
+                        </Box>
+                        <Box p='2'>
+                            <Text fontSize='md'>
+                                Congratulations you are now friends with {req.sender_name}
+                            </Text>
+                        </Box>
+                        <Spacer />
+                        <ButtonGroup gap='2'>
+                            <Button bg='maroon' color='white' onClick={() => declineFriendRequest(req.docId)}>Acknowledge</Button>
+                        </ButtonGroup>
+                        </Flex>
+                    </Box>
                     :
                     <Box
                         bg="silver"
