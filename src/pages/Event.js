@@ -7,6 +7,7 @@ import {
   query,
   where,
   getDocs,
+  deleteDoc,
   addDoc,
 } from "firebase/firestore";
 import { Box, Heading, Image, Flex, Text, Button, Container, /* AspectRatio */
@@ -26,7 +27,7 @@ AlertDescription,
 CloseButton,
 useDisclosure, } from "@chakra-ui/react";
 
-import { FaVolleyballBall, /* FaPlus */ } from "react-icons/fa";
+import SportIcon from "../components/SportSVG";
 
 import NavBar from "../components/NavBar";
 import { db } from "../firebase";
@@ -61,8 +62,14 @@ export default function Event() {
   const DeleteFromEvent = async (id) => {
     const EventDoc = doc(db, "events", eid);
     const tempArray = myEventData.attendees.filter(person => person !== id); // removes person. 
-    const newFields = { attendees: tempArray };
-    await updateDoc(EventDoc, newFields);
+    if (tempArray.length === 0) {
+      navigate("/")
+      await deleteDoc(EventDoc);
+      // if there is no one in the event, then the event will cease to exist, person to last leave the event will be rerouted to the dashboard. 
+    } else {
+      const newFields = { attendees: tempArray };
+      await updateDoc(EventDoc, newFields);
+    }
   };
 
   const getParticipants = async (user_id) => {
@@ -176,6 +183,18 @@ export default function Event() {
     await addDoc(collection(db, "notification"), { event_id: eid, recipient: friend_id, sender: myId });
   };
 
+  const whichBadgeColour = (user_id, index) => {
+    if (index > myEventData.pax) {
+      return "pink"
+    } else {
+      if (user_id === myId) {
+        return "yellow";
+      } else {
+        return "green";
+      }
+    }
+  };
+
   function OneParticipant(props) {
     return ( props.player_id === myEventData.organiser ?
       <HStack></HStack>
@@ -192,7 +211,7 @@ export default function Event() {
       <Box ml='3' alignItems=''>
         <Text fontWeight='bold'>
         {props.player_name}
-          <Badge ml='1' colorScheme='orange'>
+          <Badge ml='1' colorScheme={whichBadgeColour(props.player_id, props.index)}>
           {props.player_level}
           </Badge>
         </Text>
@@ -212,8 +231,8 @@ export default function Event() {
           borderColor={useColorModeValue('gray.100', 'gray.700')}
         />
       }>
-      {participants.map((elem) => {
-        return (<OneParticipant key={elem.player_id} player_image={elem.player_image} player_name={elem.player_name} player_level={elem.player_level} player_id={elem.player_id}/> )
+      {participants.map((elem, idx) => {
+        return (<OneParticipant key={elem.player_id} index={idx} player_image={elem.player_image} player_name={elem.player_name} player_level={elem.player_level} player_id={elem.player_id}/> )
       })}
     </Stack>
     )
@@ -411,7 +430,7 @@ export default function Event() {
               rounded={'md'}>
               {myEventData.activity}
             </Text>
-            <FaVolleyballBall />
+            <SportIcon what={myEventData.activity} />
           </HStack>
 
           <Heading>
@@ -425,7 +444,7 @@ export default function Event() {
             <Box ml='5'>
               <Text fontWeight='bold' fontSize='xl'>
               {organiserData.player_name}
-                <Badge ml='1' colorScheme='green'>
+                <Badge ml='1' colorScheme='purple'>
                   Organiser
                 </Badge>
               </Text>
