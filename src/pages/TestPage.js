@@ -1,12 +1,15 @@
 import React from 'react'
-import SideBar from '../components/SideBar';
-
-const myTest = <SideBar />
+import ShowSport from "../components/SportSVG";
+import { Text,
+} from "@chakra-ui/react";
 
 export default function TestPage() {
   return (
     <div>
-        {myTest}
+        <Text> 
+            This is a testing page
+        </Text>
+        <ShowSport what={"basketball"} />
     </div>
   )
 }

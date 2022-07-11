@@ -2,83 +2,51 @@ import NavBar from "../components/NavBar";
 import { React, /* ReactElement */ useEffect, useState } from "react";
 import { db } from "../firebase.js";
 import { useParams } from "react-router-dom";
-// import { useAuth } from "../contexts/AuthContext";
-import AvatarRipple from "../components/AvatarRipple";
+import PostMyComment from "../components/PostComment";
 
 import {
   Box,
-  Wrap,
   Text,
-  // Stack,
-  // Container,
-  // Flex,
+  Heading,
+  Stack,
+  Divider,
+  SimpleGrid,
+  Avatar,
+  Badge,
+  Flex,
   Image,
-  // StackDivider,
-  // Button,
-  // Input,
-  // InputRightAddon,
-  // InputGroup,
+  AspectRatio,
+  Center,
+  VStack,
 } from "@chakra-ui/react";
 
-import { collection, getDoc, /* updateDoc */ doc } from "firebase/firestore";
+import { collection, getDoc, doc } from "firebase/firestore";
 
-/* function ImageQuery(userId) {
-  const [user, setUser] = useState('');
-
-  useEffect(() => {
-    const getDisplay = async () => {
-      const userDocRef = doc(db, "users", userId);
-      const userData = await getDoc(userDocRef);
-      if (userData.exists()) {
-        setUser(userData.data());
-      } else {
-        console.log("error");
-      }
-    }
-  }, [userId]);
-
-  return (user.img);
-} */
-
-/* function addCommentButton() {
-  const [value, setValue] = React.useState("");
-  const handleChange = (event) => setValue(event.target.value);
-
-  return (
-    <Box bg="maroon" w="50%" p={4} color="black" align="center">
-    <InputGroup size="lg">
-      <Input placeholder="your comments" value={value} />
-      <InputRightAddon>
-        <Button colorScheme="teal" size="lg" onClick={() => (addComment(value))}>
-          add comment
-        </Button>
-      </InputRightAddon>
-    </InputGroup>
-  </Box>
-  );
-} */
+// need to refresh page when i post a comment!
 
 export default function Court() {
   const { cid } = useParams();
-  // const { currentUser } = useAuth();
-  // const [ currentUserInfo, setCurrentUserInfo ] = useState('');
-  // console.log(cid);
-  const [courtImage, setCourtImage] = useState("");
-  const [courtName, setCourtName] = useState("");
-  const [courtRegion, setCourtRegion] = useState("");
-  const [courtActivity, setCourtActivity] = useState("");
-  const [courtComments, setCourtComments] = useState([]); // comments are stored as a [] in firestore.
+  // const { currentUser } = useAuth(); // for adding your own comments 
+  // const myId = currentUser.uid;
+  const [courtData, setCourtData] = useState(''); // everything about the court. 
+  const [commentData, setCommentData] = useState([]); // for userImage etc 
 
   useEffect(() => {
     const getCourtDoc = async () => {
-      const courtDocRef = doc(collection(db, "courts"), cid); // can just .id?
-      const courtData = await getDoc(courtDocRef);
-      if (courtData.exists()) {
-        setCourtImage(courtData.data().court_image);
-        setCourtName(courtData.data().court_name);
-        setCourtRegion(courtData.data().region);
-        setCourtActivity(courtData.data().activity);
-        setCourtComments(courtData.data().comments);
+      const courtDocRef = doc(collection(db, "courts"), cid); 
+      const theCourtData = await getDoc(courtDocRef);
+      if (theCourtData.exists()) {
+        setCourtData(theCourtData.data());
+        // console.log(theCourtData.data());
+        const tempArray = theCourtData.data().comments.map(
+          (elem) => getCommentData(elem)
+        );
+        const promiseSolver = Promise.all(tempArray).then((values) => {
+          return values;
+        });
+        const finalArray = await promiseSolver;
+        // console.log("finalArray = ", finalArray);
+        setCommentData(finalArray);
       } else {
         console.log("error");
       }
@@ -86,73 +54,93 @@ export default function Court() {
     getCourtDoc();
   }, [cid]);
 
-  console.log("them comments be like = ", courtComments);
+  // console.log("them comments be like = ", commentData);
 
-  /* useEffect(() => {
-    const getCourtDoc = async () => {
-      g
+  const getCommentData = async (elem) => {
+    const userDoc = doc(collection(db, "users"), elem.user_id);
+    const theUserDoc = await getDoc(userDoc);
+    if (theUserDoc.exists()) {
+      const temp = {
+        comment: elem.comment,
+        display_picture: theUserDoc.data().img,
+        level: theUserDoc.data().level,
+        user_name: theUserDoc.data().username,
+      };
+      // console.log("temp = ", temp);
+      return temp;
+    } else {
+      console.log("Error");
     }
-  }, []); */
+  }
 
-  /* useEffect(() => {
-    const getUserDoc = async () => {
-      const userDocRef = doc(collection(db, "users"), currentUser.uid);
-      const userData = await getDoc(userDocRef);
-      if (userData.exists()) {
-        setCurrentUserInfo(userData.data());
-      } else {
-        console.log("error");
-      }
-    };
-    getUserDoc();
-    }, [currentUser]); */
 
-    // this useEffect is to get the current user info so that when commenting, it can be used. 
-    
-  /* const addComment = async (myComment) => {
-    const myDoc = doc(db, "courts", cid);
-    const newFields = { comments: courtComments.concat({comment: myComment, display_img: currentUserInfo.img, user_id: currentUser.uid, username: currentUserInfo.username}) };
-    // cannot read value that is undefined??
-    await updateDoc(myDoc, newFields);
-  }; */
-
-  /* const [value, setValue] = React.useState("");
-  const handleChange = (event) => setValue(event.target.value); */
+  /* function SingleComment(props) {
+    return (
+      // do your thang... style quickly.
+      <div>
+        nada
+      </div>
+    ) abstraction principle has left the chat
+  } */
 
   return (
     <div>
       <NavBar />
-      <Image src={courtImage} />
-      <Text>{courtName}</Text>
-      <Text>{courtRegion}</Text>
-      <Text>{courtActivity}</Text>
 
-      <Wrap>
-        {courtComments.map(function (elem) {
-          return (
-            <Box bg="silver" w="50%" p={4} color="black" align="center">
-              <AvatarRipple
-                display_picture={elem.display_img}
-                user_name={elem.username}
-                player_level={elem.comment}
-              />
-              {/* <Text>{elem.username} says {elem.comment}</Text>
-        <Text>user_id = {elem.user_id}  {ImageQuery(elem.user_id)} </Text> */}
-            </Box>
-          );
-        })}
-      </Wrap>
+      <Heading as='h2' size='lg' px='25' py='2'>
+        {courtData.court_name}
+      </Heading>
 
-  {/* <Box bg="maroon" w="50%" p={4} color="black" align="center">
-    <InputGroup size="lg">
-      <Input placeholder="your comments" value={value} />
-      <InputRightAddon>
-        <Button colorScheme="teal" size="lg" onClick={() => (addComment(value))}>
-          add comment
-        </Button>
-      </InputRightAddon>
-    </InputGroup>
-  </Box> */}
+      <SimpleGrid px={10} columns={[2, null]} spacing='15px'>
+        <AspectRatio ratio={4 / 3}>
+          <Image src={courtData.court_image} />
+        </AspectRatio>
+
+        <AspectRatio ratio={16 / 9}>
+          <iframe src={courtData.gmaps} alt="demo" title='unique'/>
+        </AspectRatio>
+      </SimpleGrid>
+      {/* <Box p='10' maxW='xl' borderRadius='lg' overflow='hidden'>
+
+      </Box>
+            <Box p='20' maxW='xl' borderRadius='lg' overflow='hidden'>
+
+      </Box>
+       */}
+
+      <Center>
+          <Stack direction='row' h='40px' p={2}>
+            <Text fontSize='lg'>Located in the {courtData.region}</Text>
+            <Divider orientation='vertical' />
+            <Text fontSize='lg'>This court is for {courtData.activity}</Text>
+          </Stack>
+      </Center>
+
+      <Center py='5'>
+        <Box maxW='xxl' minW='xl' borderRadius='lg' bg='white' color='black'>
+          <VStack>
+          <Heading size='md'>Comments</Heading>
+            <PostMyComment previous_comments={courtData.comments} court_id={cid} />
+            {commentData.map((oneComment, index) => {
+              return (
+                <Flex>
+                  <Avatar src={oneComment.display_picture} />
+                  <Box ml='2'>
+                    <Text fontWeight='bold'>
+                      {oneComment.user_name}
+                      <Badge ml='1' colorScheme='purple'>
+                        {oneComment.level}
+                      </Badge>
+                    </Text>
+                    <Text fontSize='sm'>{oneComment.comment}</Text>
+                  </Box>
+                </Flex>
+              )
+            }
+            )}
+          </VStack>
+        </Box>
+      </Center>
     </div>
   );
 }
