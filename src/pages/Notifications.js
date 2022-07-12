@@ -295,7 +295,7 @@ export default function Notifications() {
 
     function BeFriendTab() {
         // update document
-        const updateAsFriends = async (friend_id) => {
+        const updateAsFriends = async (friend_id, notificationId) => {
             const yourCurrentFriends = await getFriendArray(friend_id); // await should solve the promise issue
             const tempArray = yourCurrentFriends.concat([myId]);
             const userDoc = doc(db, "users", friend_id);
@@ -308,6 +308,7 @@ export default function Notifications() {
             await updateDoc(myDoc, myNewFields);
             // creates a new notification telling your new friend that you are now friends 
             await addDoc(collection(db, "friendRequest"), { friends_already: true, request_from: myId, request_to: friend_id });
+            declineFriendRequest(notificationId);
         };
 
         const declineFriendRequest = async (notificationId) => {
@@ -400,7 +401,7 @@ export default function Notifications() {
                         </Box>
                         <Spacer />
                         <ButtonGroup gap='2'>
-                            <Button colorScheme='teal' onClick={() => updateAsFriends(req.request_from)}>Accept</Button>
+                            <Button colorScheme='teal' onClick={() => updateAsFriends(req.request_from, req.docId)}>Accept</Button>
                             <Button bg='maroon' color='white' onClick={() => declineFriendRequest(req.docId)}>Decline</Button>
                         </ButtonGroup>
                         </Flex>
