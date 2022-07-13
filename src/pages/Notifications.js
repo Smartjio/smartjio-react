@@ -246,20 +246,21 @@ export default function Notifications() {
               // console.log("settle the kettle = ", anotherArray); GREAT SUCCCESS
               if (friendRequests.length !== anotherArray.length) {
                 setFriendRequests(anotherArray);
-              } else {
-                console.log("no changes")
               }
+              // else {
+              //   console.log("no changes")
+              // }
         } catch (error) {
             console.log(error);
         }
     };
     getFriendRequests();
-    console.log("friend requests", friendRequests);
+    // console.log("friend requests", friendRequests);
     // eslint-disable-next-line
     }, [friendRequests]);
 
-    console.log(friendRequests);
-    console.log(friendRequests.length)
+    // console.log(friendRequests);
+    // console.log(friendRequests.length)
 
     const getFriendData = async (elem) => {
         const userDoc = doc(collection(db, "users"), elem.request_from);
@@ -316,23 +317,23 @@ export default function Notifications() {
             // creates a new notification telling your new friend that you are now friends 
             await addDoc(collection(db, "friendRequest"), { friends_already: true, request_from: myId, request_to: friend_id });
             await deleteDoc(doc(db, "friendRequest", notificationId));
-            console.log("update");
+            // console.log("update");
             const newFriendRequests = friendRequests.filter(function(obj) {
               return obj.docId !== notificationId
             });
             setFriendRequests(newFriendRequests);
-            console.log("update friend request array");
+            // console.log("update friend request array");
         };
 
         const declineFriendRequest = async (notificationId) => {
             // either get the document id or where(request_from and request_to are you and your friend respectively) 
             await deleteDoc(doc(db, "friendRequest", notificationId));
-            console.log("update");
+            // console.log("update");
             const newFriendRequests = friendRequests.filter(function(obj) {
               return obj.docId !== notificationId
             });
             setFriendRequests(newFriendRequests);
-            console.log("update friend request array");
+            // console.log("update friend request array");
         };
 
         return (friendRequests.length === 0 ? 

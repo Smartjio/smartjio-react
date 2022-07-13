@@ -36,11 +36,11 @@ export default function AuthProvider({ children }) {
                 try {
                     const docRef = doc(db, "users", user.uid);
                     const docSnap = await getDoc(docRef);
-                    console.log("parsing data", user)
+                    // console.log("parsing data", user)
                     if (docSnap.exists()) {
-                        console.log("done parsing");
+                        // console.log("done parsing");
                         const docData = docSnap.data();
-                        console.log(docData);
+                        // console.log(docData);
                         setUserData(docData);
                         return docData;
                     } else {
@@ -58,7 +58,7 @@ export default function AuthProvider({ children }) {
             // fetchData returns a promise which has to be resolved if not the routing will not work properly
             promisedData.then((fetchedData) => {
                 setUserData(fetchedData);
-                console.log(fetchedData);
+                // console.log(fetchedData);
             })
             setLoading(false);
         })

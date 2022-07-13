@@ -7,14 +7,15 @@ export default function RequireData() {
     const location = useLocation();
 
     if (currentUser === undefined || loading) {
-      console.log("failed auth", currentUser, loading);
+      // console.log("failed auth", currentUser, loading);
         return null;
-    } else {
-      console.log(currentUser)
-    }
+    } 
+    // else {
+    //   console.log(currentUser)
+    // }
 
     if ((userData === undefined && currentUser) || loading)  {
-      console.log("failed data", userData, loading);
+      // console.log("failed data", userData, loading);
         return null;
     }
     
