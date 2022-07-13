@@ -336,7 +336,7 @@ export default function Notifications() {
         };
 
         return (friendRequests.length === 0 ? 
-            <Heading> ``
+            <Heading>
                 You currently have no friend requests
             </Heading> 
             :
@@ -404,7 +404,7 @@ export default function Notifications() {
                             fallbackSrc='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKaiKiPcLJj7ufrj6M2KaPwyCT4lDSFA5oog&usqp=CAU'
                             onClick={async (event) => {
                                 try {
-                                await navigate("/");
+                                await navigate("/profile/" + req.request_from);
                                 } catch (error) {
                                 console.log(error);
                                 }
