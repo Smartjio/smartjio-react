@@ -244,15 +244,23 @@ export default function Notifications() {
               });
               const anotherArray = await promiseSolver;
               // console.log("settle the kettle = ", anotherArray); GREAT SUCCCESS
-              setFriendRequests(anotherArray);
+              if (friendRequests.length !== anotherArray.length) {
+                setFriendRequests(anotherArray);
+              }
+              // else {
+              //   console.log("no changes")
+              // }
         } catch (error) {
             console.log(error);
         }
     };
     getFriendRequests();
-    console.log("friend requests", friendRequests);
+    // console.log("friend requests", friendRequests);
     // eslint-disable-next-line
-    }, []);
+    }, [friendRequests]);
+
+    // console.log(friendRequests);
+    // console.log(friendRequests.length)
 
     const getFriendData = async (elem) => {
         const userDoc = doc(collection(db, "users"), elem.request_from);
@@ -295,7 +303,7 @@ export default function Notifications() {
 
     function BeFriendTab() {
         // update document
-        const updateAsFriends = async (friend_id) => {
+        const updateAsFriends = async (friend_id, notificationId) => {
             const yourCurrentFriends = await getFriendArray(friend_id); // await should solve the promise issue
             const tempArray = yourCurrentFriends.concat([myId]);
             const userDoc = doc(db, "users", friend_id);
@@ -308,16 +316,28 @@ export default function Notifications() {
             await updateDoc(myDoc, myNewFields);
             // creates a new notification telling your new friend that you are now friends 
             await addDoc(collection(db, "friendRequest"), { friends_already: true, request_from: myId, request_to: friend_id });
+            await deleteDoc(doc(db, "friendRequest", notificationId));
+            // console.log("update");
+            const newFriendRequests = friendRequests.filter(function(obj) {
+              return obj.docId !== notificationId
+            });
+            setFriendRequests(newFriendRequests);
+            // console.log("update friend request array");
         };
 
         const declineFriendRequest = async (notificationId) => {
             // either get the document id or where(request_from and request_to are you and your friend respectively) 
-            const notificationDoc = doc(db, "notification", notificationId);
-            await deleteDoc(notificationDoc);
+            await deleteDoc(doc(db, "friendRequest", notificationId));
+            // console.log("update");
+            const newFriendRequests = friendRequests.filter(function(obj) {
+              return obj.docId !== notificationId
+            });
+            setFriendRequests(newFriendRequests);
+            // console.log("update friend request array");
         };
 
         return (friendRequests.length === 0 ? 
-            <Heading> ``
+            <Heading>
                 You currently have no friend requests
             </Heading> 
             :
@@ -333,7 +353,7 @@ export default function Notifications() {
                         align="center"
                         borderWidth="1px"
                         borderRadius="lg"
-                        key={req.id}
+                        key={req.docId}
                     >
                         <Flex minWidth='min-content' alignItems='center' gap='2'>
                         <Box p='2'>
@@ -373,7 +393,7 @@ export default function Notifications() {
                         align="center"
                         borderWidth="1px"
                         borderRadius="lg"
-                        key={req.id}
+                        key={req.docId}
                     >
                         <Flex minWidth='min-content' alignItems='center' gap='2'>
                         <Box p='2'>
@@ -385,7 +405,7 @@ export default function Notifications() {
                             fallbackSrc='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKaiKiPcLJj7ufrj6M2KaPwyCT4lDSFA5oog&usqp=CAU'
                             onClick={async (event) => {
                                 try {
-                                await navigate("/");
+                                await navigate("/profile/" + req.request_from);
                                 } catch (error) {
                                 console.log(error);
                                 }
@@ -400,7 +420,7 @@ export default function Notifications() {
                         </Box>
                         <Spacer />
                         <ButtonGroup gap='2'>
-                            <Button colorScheme='teal' onClick={() => updateAsFriends(req.request_from)}>Accept</Button>
+                            <Button colorScheme='teal' onClick={() => updateAsFriends(req.request_from, req.docId)}>Accept</Button>
                             <Button bg='maroon' color='white' onClick={() => declineFriendRequest(req.docId)}>Decline</Button>
                         </ButtonGroup>
                         </Flex>
