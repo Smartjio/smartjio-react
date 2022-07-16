@@ -23,6 +23,8 @@ export default function Notifications() {
   const myId = currentUser.uid;
   const [myNotifications, setMyNotifications] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
+  console.log("notifications = ", myNotifications);
+  console.log("friend requests = ", friendRequests);
 
   const navigate = useNavigate();
 
@@ -137,9 +139,12 @@ export default function Notifications() {
             You currently have no notifications
         </Heading> 
         :
+        // will have error if it reads anything that might be undefined, regardless of whether the code reaches that portion or not.
         myNotifications.map((notify) => {
             // (notify, index) just use the doc id, since they are definitely unique.
-            return (
+            return ( notify === undefined ?
+                <div></div> 
+                :
               <Box
                 bg="silver"
                 w="80%"
@@ -308,7 +313,8 @@ export default function Notifications() {
             await updateDoc(myDoc, myNewFields);
             // creates a new notification telling your new friend that you are now friends 
             await addDoc(collection(db, "friendRequest"), { friends_already: true, request_from: myId, request_to: friend_id });
-            declineFriendRequest(notificationId);
+            const notificationDoc = doc(db, "notification", notificationId);
+            await deleteDoc(notificationDoc);
         };
 
         const declineFriendRequest = async (notificationId) => {

@@ -184,8 +184,9 @@ export default function Event() {
   };
 
   const whichBadgeColour = (user_id, index) => {
-    if (index > myEventData.pax) {
+    if (index > myEventData.event_limit) {
       return "pink"
+      // take note to update all to event_limit: you can still join when participants are over the limit, just displayed pink.
     } else {
       if (user_id === myId) {
         return "yellow";
@@ -298,7 +299,7 @@ export default function Event() {
       onOpen,
     } = useDisclosure({ defaultIsOpen: false })
 
-    // might need to be async here
+    // might need to be async
     const onClickJioFriend = (friend_username) => {
       if (friend_username !== "") {
         const jioFriend = myFriends.find((person) => person.player_name === friend_username); // find the first instance of this dude
@@ -478,6 +479,13 @@ export default function Event() {
               courtData.court_image
             }
             objectFit={'cover'}
+            onClick={async (event) => {
+              try {
+              await navigate("/court/" + courtData.court_id); // click on court image -> go to court page.
+              } catch (error) {
+              console.log(error);
+              }
+            }}/>
           />
         </Flex>
         {/* below here can add participants and the add button respectively */}
