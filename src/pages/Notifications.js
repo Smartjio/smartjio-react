@@ -123,11 +123,13 @@ export default function Notifications() {
         // for deleting the notification
         const notificationDoc = doc(db, "notification", notificationId);
         await deleteDoc(notificationDoc); 
+        window.location.reload(); // RSC-CHEAT
     };
 
     const updateDeclineEvent = async (notificationId) => {
         const notificationDoc = doc(db, "notification", notificationId);
         await deleteDoc(notificationDoc);
+        window.location.reload(); // RSC-CHEAT
     };
 
     /* const handleClickAccept = () => {
@@ -315,12 +317,14 @@ export default function Notifications() {
             await addDoc(collection(db, "friendRequest"), { friends_already: true, request_from: myId, request_to: friend_id });
             const notificationDoc = doc(db, "notification", notificationId);
             await deleteDoc(notificationDoc);
+            window.location.reload(); // RSC-CHEAT
         };
 
         const declineFriendRequest = async (notificationId) => {
             // either get the document id or where(request_from and request_to are you and your friend respectively) 
             const notificationDoc = doc(db, "notification", notificationId);
             await deleteDoc(notificationDoc);
+            window.location.reload(); // RSC-CHEAT
         };
 
         return (friendRequests.length === 0 ? 
