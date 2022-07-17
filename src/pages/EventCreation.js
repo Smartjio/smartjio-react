@@ -120,17 +120,23 @@ export default function TestPage() {
           const courtEvents = query(collection(db, "events"), where("court_id", "==", courtVal.court_id));
           try {
             const courtEventsData = await getDocs(courtEvents);
-            courtEventsData.forEach((doc) => {
-                console.log(doc.id, " => ", doc.data());
-                if (doc.date <= endDate && doc.end_date >= date) {
-                    setClashEvent({
-                        start_time: doc.date,
-                        end_time: doc.end_date,
-                        event_organiser: doc.organiser,
-                        event_activity: doc.activity,
-                    })
-                }
-              });
+            console.log("courtEventsData = ", courtEventsData); // getDocs returns a weird object
+            if (courtEventsData.empty) {
+                setClashEvent('');
+            } else {
+                courtEventsData.forEach((doc) => {
+                    console.log(doc.id, " => ", doc.data());
+                    if (doc.date <= endDate && doc.end_date >= date) {
+                        // prevent clash logic, you can clash with multiple events, just figure it out slowly...
+                        setClashEvent({
+                            start_time: doc.date,
+                            end_time: doc.end_date,
+                            event_organiser: doc.organiser,
+                            event_activity: doc.activity,
+                        })
+                    }
+                  });
+            }
             } catch (error) {
                 console.log(error);
             }
@@ -166,6 +172,8 @@ export default function TestPage() {
             // save as 23:59 -> so the other person can just book at 00:00
         } */
 
+        let formNotFilled = (courtVal === '' || sport === "" || levelProf === "" || date === endDate || limit === 0); // should be able to use const
+
         const createEvent = async () => {
             try {
                 const convertedArray = inviteList.map((user_obj) => user_obj.player_id); // converts all the user objects into an Array of UID
@@ -178,11 +186,13 @@ export default function TestPage() {
 
         const myButtonCallWhat = () => {
             onOpen();
-            createEvent();
+            if (formNotFilled && clashEvent === '') {
+                createEvent();
+            }
         }
 
         return isVisible ? (
-            (courtVal === '' || sport === "" || levelProf === "" || date === endDate || limit === 0) ? (
+            (formNotFilled) ? (
                 <Alert status='error'>
                     <AlertIcon />
                     <Box>
