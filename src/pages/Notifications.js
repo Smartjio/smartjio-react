@@ -28,6 +28,8 @@ export default function Notifications() {
 
   const navigate = useNavigate();
 
+  const [triggerEffect, setTriggerEffect] = useState(false);
+
   useEffect(() => {
     const getNotifications = async () => {
       const tempArray = [];
@@ -71,10 +73,7 @@ export default function Notifications() {
       }
     };
     getNotifications();
-    // console.log("inside of my []", myNotifications); this runs first, followed by what it is called within function above.
-
-    // eslint-disable-next-line
-  }, []); // myId can be included so that the page will refresh?? 
+  }, [myId, triggerEffect]); // myId can be included so that the page will refresh?? 
 
   const queryWithinLoop = async (elem) => {
     // maybe this shouldnt be an async function since it resides within another async function => resulting in a promise return
@@ -123,13 +122,15 @@ export default function Notifications() {
         // for deleting the notification
         const notificationDoc = doc(db, "notification", notificationId);
         await deleteDoc(notificationDoc); 
-        window.location.reload(); // RSC-CHEAT
+        // window.location.reload(); // RSC-CHEAT
+        setTriggerEffect(!triggerEffect);
     };
 
     const updateDeclineEvent = async (notificationId) => {
         const notificationDoc = doc(db, "notification", notificationId);
         await deleteDoc(notificationDoc);
-        window.location.reload(); // RSC-CHEAT
+        // window.location.reload(); // RSC-CHEAT
+        setTriggerEffect(!triggerEffect);
     };
 
     /* const handleClickAccept = () => {
@@ -250,16 +251,15 @@ export default function Notifications() {
                 return values;
               });
               const anotherArray = await promiseSolver;
-              // console.log("settle the kettle = ", anotherArray); GREAT SUCCCESS
+              // console.log("settle the kettle = ", anotherArray); //GREAT SUCCCESS
               setFriendRequests(anotherArray);
         } catch (error) {
             console.log(error);
         }
     };
     getFriendRequests();
-    console.log("friend requests", friendRequests);
-    // eslint-disable-next-line
-    }, []);
+    //console.log("friend requests", friendRequests);
+    }, [myId, triggerEffect]);
 
     const getFriendData = async (elem) => {
         const userDoc = doc(collection(db, "users"), elem.request_from);
@@ -301,6 +301,7 @@ export default function Notifications() {
     };
 
     function BeFriendTab() {
+        // this might be faulty -> relook at this section of notificaitons.
         // update document
         const updateAsFriends = async (friend_id, notificationId) => {
             const yourCurrentFriends = await getFriendArray(friend_id); // await should solve the promise issue
@@ -315,20 +316,22 @@ export default function Notifications() {
             await updateDoc(myDoc, myNewFields);
             // creates a new notification telling your new friend that you are now friends 
             await addDoc(collection(db, "friendRequest"), { friends_already: true, request_from: myId, request_to: friend_id });
-            const notificationDoc = doc(db, "notification", notificationId);
+            const notificationDoc = doc(db, "friendRequest", notificationId);
             await deleteDoc(notificationDoc);
-            window.location.reload(); // RSC-CHEAT
+            // window.location.reload(); // RSC-CHEAT
+            setTriggerEffect(!triggerEffect); // rerenders the page
         };
 
         const declineFriendRequest = async (notificationId) => {
             // either get the document id or where(request_from and request_to are you and your friend respectively) 
-            const notificationDoc = doc(db, "notification", notificationId);
+            const notificationDoc = doc(db, "friendRequest", notificationId);
             await deleteDoc(notificationDoc);
-            window.location.reload(); // RSC-CHEAT
+            // window.location.reload(); // RSC-CHEAT
+            setTriggerEffect(!triggerEffect);
         };
 
         return (friendRequests.length === 0 ? 
-            <Heading> ``
+            <Heading> 
                 You currently have no friend requests
             </Heading> 
             :
