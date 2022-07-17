@@ -37,6 +37,9 @@ import { useNavigate } from 'react-router-dom';
 // import AddToCalendarButton from 'react-add-to-calendar';
 
 export default function Event() {
+
+  const [triggerEffect, setTriggerEffect] = useState(false);
+
   const navigate = useNavigate();
   const { eid } = useParams();
   const { currentUser } = useAuth();
@@ -49,26 +52,27 @@ export default function Event() {
   const [ date, setDate ] = useState('');
   const [notifications, setNotifications] = useState([]);
 
-  // join / leave event -> rerender on click
-  // click a button to add this to your google calendar -> work in progress.
+  // join / leave event -> rerender on click -> triggerEffect hook.
 
   const AddToEvent = async (id) => {
     const EventDoc = doc(db, "events", eid);
     const tempArray = myEventData.attendees.concat([id]);
     const newFields = { attendees: tempArray };
     await updateDoc(EventDoc, newFields);
+    setTriggerEffect(!triggerEffect);
   };
 
   const DeleteFromEvent = async (id) => {
     const EventDoc = doc(db, "events", eid);
     const tempArray = myEventData.attendees.filter(person => person !== id); // removes person. 
     if (tempArray.length === 0) {
-      navigate("/")
+      navigate("/"); // does order matter here?
       await deleteDoc(EventDoc);
       // if there is no one in the event, then the event will cease to exist, person to last leave the event will be rerouted to the dashboard. 
     } else {
       const newFields = { attendees: tempArray };
       await updateDoc(EventDoc, newFields);
+      setTriggerEffect(!triggerEffect);
     }
   };
 
@@ -156,8 +160,8 @@ export default function Event() {
       }
     };
     getEventDoc();
-  }, [eid]);
-  // cannot add the addToevent and deletefromevent into the dependency array leh -> so how ah
+  }, [eid, triggerEffect]);
+  // cannot add the addToevent and deletefromevent into the dependency array -> use triggerEffect hook.
 
   // console.log("all details = ", myEventData, participants, courtData);
 
@@ -286,12 +290,12 @@ export default function Event() {
       }
     };
     notInvitedYet();
-  }, [text, eid]); // rerun everytime we click! createEventInvitation
+  }, [text, eid, triggerEffect]); // rerun everytime we click! createEventInvitation, and triggerEffect!
 
   function JoinEventButton() {
     // let invitationStatus = false;
     // let showText = '';
-    // console.log("wtf has been queried = ", notifications);
+    // console.log("query result = ", notifications);
 
     const {
       isOpen: isVisible,
@@ -323,6 +327,11 @@ export default function Event() {
         }
       }
     }
+
+    const improvedClose = () => {
+      onClose();
+      setTriggerEffect(!triggerEffect);
+    }
   
     return isVisible ? (
       (participants.filter((friend_obj) => friend_obj.player_name === text).length === 0) ?
@@ -340,7 +349,7 @@ export default function Event() {
             position='relative'
             right={-1}
             top={-1}
-            onClick={onClose}
+            onClick={improvedClose}
           />
         </Alert>
         :
@@ -357,7 +366,7 @@ export default function Event() {
             position='relative'
             right={-1}
             top={-1}
-            onClick={onClose}
+            onClick={improvedClose}
           />
         </Alert>
       :
@@ -374,7 +383,7 @@ export default function Event() {
           position='relative'
           right={-1}
           top={-1}
-          onClick={onClose}
+          onClick={improvedClose}
         />
       </Alert>
     ) : (
