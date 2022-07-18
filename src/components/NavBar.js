@@ -137,7 +137,7 @@ export default function WithAction() {
               >
                 Notifications
               </Link>
-              <Link
+              {/* <Link
                 px={2}
                 py={1}
                 rounded={"md"}
@@ -148,7 +148,7 @@ export default function WithAction() {
                 href="/venues"
               >
                 Venues
-              </Link>
+              </Link> */}
               <Link
                 px={2}
                 py={1}

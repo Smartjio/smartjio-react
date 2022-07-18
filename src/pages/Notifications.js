@@ -23,8 +23,8 @@ export default function Notifications() {
   const myId = currentUser.uid;
   const [myNotifications, setMyNotifications] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
-  console.log("notifications = ", myNotifications);
-  console.log("friend requests = ", friendRequests);
+  // console.log("notifications = ", myNotifications);
+  // console.log("friend requests = ", friendRequests);
 
   const navigate = useNavigate();
 

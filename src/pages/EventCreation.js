@@ -380,10 +380,10 @@ export default function TestPage() {
                     ) : (
                         <FormErrorMessage>The venue requested does not exist.</FormErrorMessage>
                     )}
-                </FormControl>
-                {courtSuggestions && courtSuggestions.map((suggestion, index) => 
-                    <Container key={index} value={suggestion} onClick={() => onCourtSuggestHandler(suggestion)}>{suggestion.court_name}</Container> // show court name but use the court object.
+                    {courtSuggestions && courtSuggestions.map((suggestion, index) => 
+                    <option key={index} value={suggestion} onClick={() => onCourtSuggestHandler(suggestion)}>{suggestion.court_name}</option> // show court name but use the court object.
                     )}
+                </FormControl>
             </Container>
         )
     }
