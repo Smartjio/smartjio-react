@@ -1,59 +1,36 @@
 import { React, useState, useEffect /* useCallback */ } from "react";
 import {
   collection,
-  getDoc,
-  doc,
   query,
   where,
   getDocs,
 } from "firebase/firestore";
 import {
-  Box,
   Center,
   Heading,
-  VStack,
-  Image,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Flex,
-  Text,
-  Spacer,
-  Button,
-  ButtonGroup,
   Container,
   SimpleGrid,
   Stack,
   StackDivider,
   useColorModeValue,
-  List,
-  ListItem,
 } from "@chakra-ui/react";
 
 import NavBar from "../components/NavBar";
-import MyActivities from "../components/ActivityBoxes";
+import { ActivityBoxes } from "../components/ActivityBoxes";
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from 'react-router-dom';
 
 // 1. query all of the events that the user is a part of.
 // 2. compare to new Date(), make two lists, render them after a divider -> similar to the watch page.
 // 3. query the court data and user data in another component to resolve the promise problem.
 
 export default function Activities() {
-    const whatsTheDate = new Date();
     const { currentUser } = useAuth();
     const myId = currentUser.uid;
     const [upcoming, setUpcoming] = useState([]);
     const [thePast, setThePast] = useState([]);
-    const [todayOclock, setTodayOclock] = useState(whatsTheDate.getTime()); // literally today
-    // console.log("upcoming = ", upcoming);
-    // console.log("thePast = ", thePast);
-    // console.log("the time = ", todayOclock);
-  
-    const navigate = useNavigate();
+    console.log("upcoming = ", upcoming);
+    console.log("thePast = ", thePast);
 
     // show Events by chronology -> shows the upcoming event first. 
     const sortFunctionA = (a, b) => {
@@ -77,7 +54,7 @@ export default function Activities() {
                     where("attendees", "array-contains", myId),
                     );
                 const queryResults = await getDocs(myQuery);
-                console.log("Query Result = ", queryResults);
+                // console.log("Query Result = ", queryResults);
                 queryResults.forEach((doc) => {
                     if (doc.exists()) {
                         const tempObject = doc.data()
@@ -87,7 +64,9 @@ export default function Activities() {
                     } else {
                         console.log("You are not part of any events yet");
                     }
-                })
+                });
+                const todayOclock = new Date();
+                console.log("the time = ", todayOclock);
                 setUpcoming(tempArray.filter((event) => (event.date.getTime() > todayOclock)).sort(sortFunctionA)); // somehow the date thing not working -> need to convert toDate()
                 setThePast(tempArray.filter((event) => (event.date.getTime() <= todayOclock)).sort(sortFunctionB));
             } catch (error) {
@@ -95,12 +74,7 @@ export default function Activities() {
             }
         };
         getActivities();
-        }, [myId,todayOclock]);
-
-        // 'yellow.500', 'yellow.300' 
-        // 'green.500', 'green.300' -> upcoming
-        // 'red.500', 'red.300'
-
+        }, [myId]);
 
   return (
     <>
@@ -109,7 +83,7 @@ export default function Activities() {
       <SimpleGrid
         columns={{ base: 1, lg: 1 }} // lg to determine how many columns you want.
         spacing={{ base: 8, md: 10 }}
-        py={{ base: 18, md: 2 }}>
+        py={{ base: 18, md: 10 }}>
             <Stack
             spacing={{ base: 8, sm: 6 }}
             direction={'column'}
@@ -121,18 +95,24 @@ export default function Activities() {
                 <Center>
                     <Heading color={"Highlight"}>My activities</Heading>
                 </Center>
-                {(upcoming.length > 0) ? (
-                    upcoming.map((event) => {
-                        return (
-                            <MyActivities c1='green.500' c2='green.300' date={event.date} court_id={event.court_id} participants={event.attendees}/>
-                        )})
-                ) : (
-                    <></>
-                )}
-                <Heading>Past events</Heading>
+
+                {upcoming.map((event) => {
+                    return (
+                        <ActivityBoxes c1='green.500' c2='green.300' date={event.date} court_id={event.court_id} participants={event.attendees} organiser={event.organiser} sport={event.activity}/>
+                    )
+                })}
+
+                <Heading      
+                size="md"       
+                color={useColorModeValue('pink.500', 'pink.300')}
+                fontWeight={'500'}
+                textTransform={'uppercase'} 
+                mb={'4'}>
+                Past events
+                </Heading>
                 {thePast.map((event) => {
                     return (
-                        <Text>{event.docId}</Text>
+                        <ActivityBoxes c1='red.500' c2='red.300' date={event.date} court_id={event.court_id} participants={event.attendees} organiser={event.organiser} sport={event.activity}/>
                     )
                 })}
             </Stack>
