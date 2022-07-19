@@ -186,7 +186,7 @@ export default function TestPage() {
 
         const myButtonCallWhat = () => {
             onOpen();
-            if (formNotFilled && clashEvent === '') {
+            if (!formNotFilled && clashEvent === '') {
                 createEvent();
             }
         }
