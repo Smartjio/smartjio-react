@@ -12,7 +12,7 @@ export default function SportSVG(props) {
             return (
                 <FaBasketballBall />
             );
-        } else if (props.what === "soccer") {
+        } else if (props.what === "football") {
             return (
                 <FaFutbol />
             );
@@ -28,7 +28,7 @@ export default function SportSVG(props) {
             return (
                 <MdSportsHandball />
             );
-        } else if (props.what === "tabletennis") {
+        } else if (props.what === "table tennis") {
             return (
                 <FaTableTennis />
             );
@@ -36,6 +36,10 @@ export default function SportSVG(props) {
             return (
                 <FaRegCircle />
             );
+        } else {
+            return (
+                <div></div>
+            )
         }
     }
   return (

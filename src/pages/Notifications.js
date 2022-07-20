@@ -23,8 +23,12 @@ export default function Notifications() {
   const myId = currentUser.uid;
   const [myNotifications, setMyNotifications] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
+  // console.log("notifications = ", myNotifications);
+  // console.log("friend requests = ", friendRequests);
 
   const navigate = useNavigate();
+
+  const [triggerEffect, setTriggerEffect] = useState(false);
 
   useEffect(() => {
     const getNotifications = async () => {
@@ -69,10 +73,7 @@ export default function Notifications() {
       }
     };
     getNotifications();
-    // console.log("inside of my []", myNotifications); this runs first, followed by what it is called within function above.
-
-    // eslint-disable-next-line
-  }, []); // myId can be included so that the page will refresh?? 
+  }, [myId, triggerEffect]); // myId can be included so that the page will refresh?? 
 
   const queryWithinLoop = async (elem) => {
     // maybe this shouldnt be an async function since it resides within another async function => resulting in a promise return
@@ -121,11 +122,15 @@ export default function Notifications() {
         // for deleting the notification
         const notificationDoc = doc(db, "notification", notificationId);
         await deleteDoc(notificationDoc); 
+        // window.location.reload(); // RSC-CHEAT
+        setTriggerEffect(!triggerEffect);
     };
 
     const updateDeclineEvent = async (notificationId) => {
         const notificationDoc = doc(db, "notification", notificationId);
         await deleteDoc(notificationDoc);
+        // window.location.reload(); // RSC-CHEAT
+        setTriggerEffect(!triggerEffect);
     };
 
     /* const handleClickAccept = () => {
@@ -137,9 +142,12 @@ export default function Notifications() {
             You currently have no notifications
         </Heading> 
         :
+        // will have error if it reads anything that might be undefined, regardless of whether the code reaches that portion or not.
         myNotifications.map((notify) => {
             // (notify, index) just use the doc id, since they are definitely unique.
-            return (
+            return ( notify === undefined ?
+                <div></div> 
+                :
               <Box
                 bg="silver"
                 w="80%"

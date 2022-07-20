@@ -15,6 +15,7 @@ import ProfileCreation from './ProfileCreation';
 import ProfilePage from './ProfilePage';
 import Activities from './Activities';
 import Settings from './Settings';
+import ExploreVenues from './CourtExplore';
 import RequireData from '../components/RequireData';
 import RequireAuth from '../components/RequireAuth';
 
@@ -41,7 +42,8 @@ function App() {
           <Route path="/testing" element={<TestPage />} />
           <Route path="/ErrorEventNotFound" element={<ErrorEventNotFound />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/activities" element={<Activities />} />
+          <Route path="/activities" element={<Activities />} /> 
+          <Route path="/venues" element={<ExploreVenues />} />
         </Route>
 
       </Routes>

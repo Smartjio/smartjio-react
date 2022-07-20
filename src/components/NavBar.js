@@ -137,6 +137,18 @@ export default function WithAction() {
               >
                 Notifications
               </Link>
+              {/* <Link
+                px={2}
+                py={1}
+                rounded={"md"}
+                _hover={{
+                  textDecoration: "none",
+                  bg: useColorModeValue("gray.200", "gray.700"),
+                }}
+                href="/venues"
+              >
+                Venues
+              </Link> */}
               <Link
                 px={2}
                 py={1}
