@@ -55,6 +55,7 @@ import { useAuth } from "../contexts/AuthContext";
 // import { useParams } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import DatePicker from "react-datepicker";
+require('react-datepicker/dist/react-datepicker.css'); // missing css dependency that is not on the website. 
 
 export default function TestPage() {
     // const [value, setValue] = useState("");
@@ -185,10 +186,10 @@ export default function TestPage() {
         }
 
         const myButtonCallWhat = () => {
-            onOpen();
             if (!formNotFilled && clashEvent === '') {
                 createEvent();
             }
+            onOpen(); // called after?
         }
 
         return isVisible ? (
@@ -564,6 +565,20 @@ export default function TestPage() {
         )
     }
 
+    const fixEventTime = (date_obj) => {
+        let theHours = date_obj.getHours().toString();
+        let theMinutes = date_obj.getMinutes().toString();
+        while (theHours.length < 2) {
+            theHours = "0" + theHours;
+          }
+        while (theMinutes.length < 2) {
+            theMinutes = "0" + theMinutes;
+        }
+        return (
+            theHours + ":" + theMinutes
+        )
+    }
+
     return (
         <div>
             <NavBar />
@@ -637,10 +652,10 @@ export default function TestPage() {
                         {/* getMonth() is off by 1 month... */}
                         {(endDate.getTime() > date.getTime()) ? (
                             <List spacing={2}>
-                                <ListItem><HStack><Text>Date: {date.getDate()} / {date.getMonth() + 1} / {date.getFullYear()} /</Text></HStack></ListItem> 
-                                <ListItem><HStack><Text>Start: {date.getHours()}:{date.getMinutes()} </Text></HStack></ListItem>
+                                <ListItem><HStack><Text>Date: {date.getDate()} / {date.getMonth() + 1} / {date.getFullYear()} </Text></HStack></ListItem> 
+                                <ListItem><HStack><Text>Start: {fixEventTime(date)} </Text></HStack></ListItem>
                                 {/* can fix getHours showing 1.0 instead of 01:00 as time.  */}
-                                <ListItem>End: {endDate.getHours()}:{endDate.getMinutes()} </ListItem>
+                                <ListItem>End: {fixEventTime(endDate)} </ListItem>
                             </List>
                         ) : (
                             <List spacing={2}>

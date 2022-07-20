@@ -36,6 +36,10 @@ export default function SportSVG(props) {
             return (
                 <FaRegCircle />
             );
+        } else {
+            return (
+                <div></div>
+            )
         }
     }
   return (

@@ -1,158 +1,21 @@
 import NavBar from "../components/NavBar";
-import { React, /* ReactElement */ useEffect, useState } from "react";
-import { db } from "../firebase.js";
-import { useParams } from "react-router-dom";
-import PostMyComment from "../components/PostComment";
+import { React, useState } from "react";
 
-import {
-  Box,
-  chakra,
-  Container,
-  Stack,
-  Text,
-  Image,
-  Flex,
-  VStack,
-  Button,
-  Heading,
-  SimpleGrid,
-  StackDivider,
-  useColorModeValue,
-  VisuallyHidden,
-  List,
-  ListItem,
-  Avatar,
-  Badge,
-  AspectRatio,
-  Center,
-  Divider,
-  
-} from '@chakra-ui/react';
-
-import { collection, getDoc, doc } from "firebase/firestore";
+import DatePicker from "react-datepicker";
+require('react-datepicker/dist/react-datepicker.css');
 
 // need to refresh page when i post a comment!
 
 export default function TestPage() {
-  const { cid } = useParams();
-  // const { currentUser } = useAuth(); // for adding your own comments 
-  // const myId = currentUser.uid;
-  const [courtData, setCourtData] = useState(''); // everything about the court. 
-  const [commentData, setCommentData] = useState([]); // for userImage etc 
-
-  useEffect(() => {
-    const getCourtDoc = async () => {
-      const courtDocRef = doc(collection(db, "courts"), cid); 
-      const theCourtData = await getDoc(courtDocRef);
-      if (theCourtData.exists()) {
-        setCourtData(theCourtData.data());
-        // console.log(theCourtData.data());
-        const tempArray = theCourtData.data().comments.map(
-          (elem) => getCommentData(elem)
-        );
-        const promiseSolver = Promise.all(tempArray).then((values) => {
-          return values;
-        });
-        const finalArray = await promiseSolver;
-        // console.log("finalArray = ", finalArray);
-        setCommentData(finalArray);
-      } else {
-        console.log("error");
-      }
-    };
-    getCourtDoc();
-  }, [cid]);
-
-  // console.log("them comments be like = ", commentData);
-
-  const getCommentData = async (elem) => {
-    const userDoc = doc(collection(db, "users"), elem.user_id);
-    const theUserDoc = await getDoc(userDoc);
-    if (theUserDoc.exists()) {
-      const temp = {
-        comment: elem.comment,
-        display_picture: theUserDoc.data().img,
-        level: theUserDoc.data().level,
-        user_name: theUserDoc.data().username,
-      };
-      // console.log("temp = ", temp);
-      return temp;
-    } else {
-      console.log("Error");
-    }
-  }
-
-
-  /* function SingleComment(props) {
-    return (
-      // do your thang... style quickly.
-      <div>
-        nada
-      </div>
-    ) abstraction principle has left the chat
-  } */
-
+    const [date, setDate] = useState(new Date());
   return (
     <div>
       <NavBar />
-
-      <Heading as='h2' size='lg' px='25' py='2'>
-        {courtData.court_name}
-      </Heading>
-
-      <SimpleGrid px={10} columns={[2, null]} spacing='15px'>
-        <AspectRatio ratio={4 / 3}>
-          <Image src={courtData.court_image} />
-        </AspectRatio>
-
-        <AspectRatio ratio={16 / 9}>
-          <iframe src={courtData.gmaps} alt="demo" title='unique'/>
-        </AspectRatio>
-      </SimpleGrid>
-      {/* <Box p='10' maxW='xl' borderRadius='lg' overflow='hidden'>
-
-      </Box>
-            <Box p='20' maxW='xl' borderRadius='lg' overflow='hidden'>
-
-      </Box>
-       */}
-
-      <Center>
-          <Stack direction='row' h='40px' p={2}>
-            <Text fontSize='lg'>Located in the {courtData.region}</Text>
-            <Divider orientation='vertical' />
-            <Text fontSize='lg'>This court is for {courtData.activity}</Text>
-          </Stack>
-      </Center>
-
-      <Center py='5'>
-        <Box maxW='xxl' minW='xl' borderRadius='lg' bg='white' color='black'>
-          <VStack>
-          <Heading size='md'>Comments</Heading>
-            <PostMyComment previous_comments={courtData.comments} court_id={cid} />
-            {commentData.map((oneComment, index) => {
-              return (
-                <Flex>
-                  <Avatar src={oneComment.display_picture} />
-                  <Box ml='2'>
-                    <Text fontWeight='bold'>
-                      {oneComment.user_name}
-                      <Badge ml='1' colorScheme='purple'>
-                        {oneComment.level}
-                      </Badge>
-                    </Text>
-                    <Text fontSize='sm'>{oneComment.comment}</Text>
-                  </Box>
-                </Flex>
-              )
-            }
-            )}
-          </VStack>
-        </Box>
-      </Center>
+      <DatePicker selected={date} showTimeSelect dateFormat="Pp" onChange={(date) => setDate(date)} isClearable placeholderText="I have been cleared!"/>  
     </div>
-  );
+    )
 }
+
 
 // import { library, icon } from '@fortawesome/fontawesome-svg-core'
 // import Comments from '../components/Comments'
