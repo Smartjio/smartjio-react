@@ -251,15 +251,24 @@ export default function Notifications() {
                 return values;
               });
               const anotherArray = await promiseSolver;
-              // console.log("settle the kettle = ", anotherArray); //GREAT SUCCCESS
-              setFriendRequests(anotherArray);
+              // console.log("settle the kettle = ", anotherArray); GREAT SUCCCESS
+              if (friendRequests.length !== anotherArray.length) {
+                setFriendRequests(anotherArray);
+              }
+              // else {
+              //   console.log("no changes")
+              // }
         } catch (error) {
             console.log(error);
         }
     };
     getFriendRequests();
-    //console.log("friend requests", friendRequests);
-    }, [myId, triggerEffect]);
+    // console.log("friend requests", friendRequests);
+    // eslint-disable-next-line
+    }, [friendRequests]);
+
+    // console.log(friendRequests);
+    // console.log(friendRequests.length)
 
     const getFriendData = async (elem) => {
         const userDoc = doc(collection(db, "users"), elem.request_from);
@@ -301,7 +310,6 @@ export default function Notifications() {
     };
 
     function BeFriendTab() {
-        // this might be faulty -> relook at this section of notificaitons.
         // update document
         const updateAsFriends = async (friend_id, notificationId) => {
             const yourCurrentFriends = await getFriendArray(friend_id); // await should solve the promise issue
@@ -316,22 +324,28 @@ export default function Notifications() {
             await updateDoc(myDoc, myNewFields);
             // creates a new notification telling your new friend that you are now friends 
             await addDoc(collection(db, "friendRequest"), { friends_already: true, request_from: myId, request_to: friend_id });
-            const notificationDoc = doc(db, "friendRequest", notificationId);
-            await deleteDoc(notificationDoc);
-            // window.location.reload(); // RSC-CHEAT
-            setTriggerEffect(!triggerEffect); // rerenders the page
+            await deleteDoc(doc(db, "friendRequest", notificationId));
+            // console.log("update");
+            const newFriendRequests = friendRequests.filter(function(obj) {
+              return obj.docId !== notificationId
+            });
+            setFriendRequests(newFriendRequests);
+            // console.log("update friend request array");
         };
 
         const declineFriendRequest = async (notificationId) => {
             // either get the document id or where(request_from and request_to are you and your friend respectively) 
-            const notificationDoc = doc(db, "friendRequest", notificationId);
-            await deleteDoc(notificationDoc);
-            // window.location.reload(); // RSC-CHEAT
-            setTriggerEffect(!triggerEffect);
+            await deleteDoc(doc(db, "friendRequest", notificationId));
+            // console.log("update");
+            const newFriendRequests = friendRequests.filter(function(obj) {
+              return obj.docId !== notificationId
+            });
+            setFriendRequests(newFriendRequests);
+            // console.log("update friend request array");
         };
 
         return (friendRequests.length === 0 ? 
-            <Heading> 
+            <Heading>
                 You currently have no friend requests
             </Heading> 
             :
@@ -347,7 +361,7 @@ export default function Notifications() {
                         align="center"
                         borderWidth="1px"
                         borderRadius="lg"
-                        key={req.id}
+                        key={req.docId}
                     >
                         <Flex minWidth='min-content' alignItems='center' gap='2'>
                         <Box p='2'>
@@ -387,7 +401,7 @@ export default function Notifications() {
                         align="center"
                         borderWidth="1px"
                         borderRadius="lg"
-                        key={req.id}
+                        key={req.docId}
                     >
                         <Flex minWidth='min-content' alignItems='center' gap='2'>
                         <Box p='2'>
@@ -399,7 +413,7 @@ export default function Notifications() {
                             fallbackSrc='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKaiKiPcLJj7ufrj6M2KaPwyCT4lDSFA5oog&usqp=CAU'
                             onClick={async (event) => {
                                 try {
-                                await navigate("/");
+                                await navigate("/profile/" + req.request_from);
                                 } catch (error) {
                                 console.log(error);
                                 }

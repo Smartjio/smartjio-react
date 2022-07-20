@@ -296,7 +296,6 @@ export default function Event() {
     // let invitationStatus = false;
     // let showText = '';
     // console.log("query result = ", notifications);
-
     const {
       isOpen: isVisible,
       onClose,
@@ -332,6 +331,7 @@ export default function Event() {
       onClose();
       setTriggerEffect(!triggerEffect);
     }
+
   
     return isVisible ? (
       (participants.filter((friend_obj) => friend_obj.player_name === text).length === 0) ?

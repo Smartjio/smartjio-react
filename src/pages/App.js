@@ -1,7 +1,6 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import AuthProvider from '../contexts/AuthContext';
-import PrivateOutlet from'../components/PrivateOutlet';
 import Dashboard from './Dashboard';
 import Signup from "./Signup"
 import Login from "./Login"
@@ -17,6 +16,8 @@ import ProfilePage from './ProfilePage';
 import Activities from './Activities';
 import Settings from './Settings';
 import ExploreVenues from './CourtExplore';
+import RequireData from '../components/RequireData';
+import RequireAuth from '../components/RequireAuth';
 
 function App() {
   return (
@@ -24,13 +25,16 @@ function App() {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route element={<PrivateOutlet />}>
+
+        <Route element={<RequireAuth />}>
+          <Route path="/create" element={<ProfileCreation />} />
+        </Route>
+        
+        <Route element={<RequireData />}>
           <Route path="/" element={<Dashboard />} />
-          {/* signup goes to create and login goes to slash */}
-          {/* possible that user skips create by closing window */}
           <Route path="/event/:eid" element={<Event />} />
           <Route path="/court/:cid" element={<Court />} />
-          <Route path="/create" element={<ProfileCreation />} />
+          
           <Route path="/profile/:uid" element={<ProfilePage />} />
           <Route path="/jio" element={<EventCreation />} />
           <Route path="/friends" element={<MyFriends />} />
@@ -41,6 +45,7 @@ function App() {
           <Route path="/activities" element={<Activities />} /> 
           <Route path="/venues" element={<ExploreVenues />} />
         </Route>
+
       </Routes>
     </AuthProvider>
   )}

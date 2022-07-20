@@ -1,20 +1,11 @@
-import NavBar from "../components/NavBar";
-import { React, useState } from "react";
-
-import DatePicker from "react-datepicker";
-require('react-datepicker/dist/react-datepicker.css');
-
-// need to refresh page when i post a comment!
+import React from 'react'
 
 export default function TestPage() {
-    const [date, setDate] = useState(new Date());
   return (
-    <div>
-      <NavBar />
-      <DatePicker selected={date} showTimeSelect dateFormat="Pp" onChange={(date) => setDate(date)} isClearable placeholderText="I have been cleared!"/>  
-    </div>
-    )
+    <div>TestPage</div>
+  )
 }
+
 
 
 // import { library, icon } from '@fortawesome/fontawesome-svg-core'

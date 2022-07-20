@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { doc, getDoc } from "firebase/firestore";
 import { db } from '../firebase';
+import { useAuth } from '../contexts/AuthContext';
 
 import NavBar from '../components/NavBar'
 import {
@@ -13,9 +14,15 @@ import {
     HStack,
   } from '@chakra-ui/react';
 
+import FriendButton from '../components/FriendButton';
+
 export default function ProfilePage() {
   const { uid } = useParams();
   const [ data, setData ] = useState('');
+
+  const { currentUser } = useAuth();
+
+  const isUser = uid === currentUser.uid;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,12 +55,12 @@ export default function ProfilePage() {
       {/* <Center py={6}> */}
         <Box
           w={'80vw'}
+          maxW={'1000px'}
           bg={useColorModeValue('white', 'gray.900')}
           boxShadow={'2xl'}
           rounded={'lg'}
           p={6}
           textAlign={'center'}>
-            <HStack spacing={5}>
             <Avatar
               size={'2xl'}
               src={data.img}
@@ -62,6 +69,7 @@ export default function ProfilePage() {
               pos={'relative'}
               textAlign={'center'}
             />
+            <HStack spacing={5}>
             <Box
               textAlign={'left'}>
               <Text fontSize={'xl'} fontFamily={'body'}>
@@ -81,6 +89,7 @@ export default function ProfilePage() {
               </Text>
             </Box>
             </HStack>
+            {!isUser && <FriendButton id={ uid }/>}
           </Box>
       {/* </Center> */}
       </Flex>

@@ -38,7 +38,8 @@ export default function ProfileCreation() {
         username: username,
         location: location,
         level: level,
-        introduction: introduction
+        introduction: introduction,
+        friends: []
     }
 
     //console.log(uid)
