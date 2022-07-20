@@ -495,7 +495,6 @@ export default function Event() {
               console.log(error);
               }
             }}/>
-          />
         </Flex>
         {/* below here can add participants and the add button respectively */}
         <ViewParticipants />
