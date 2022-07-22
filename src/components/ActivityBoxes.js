@@ -26,7 +26,7 @@ import SportIcon from "../components/SportSVG";
 
 // an event object will be input through 
 
-export function ActivityBoxes({participants, court_id, date, c1, c2, organiser, sport}) {
+export function ActivityBoxes({participants, court_id, date, c1, c2, organiser, sport, event_id}) {
     const [theDate, setDate] = useState(""); // a string representation. 
     const [court_data, setCourtData] = useState(''); // just one court object. 
     const [users_data, setUserData] = useState([]); // an array of user objects that will be queried. 
@@ -138,7 +138,6 @@ export function ActivityBoxes({participants, court_id, date, c1, c2, organiser, 
         )
     }
 
-
   return (
     <Box>
         <Text
@@ -146,7 +145,8 @@ export function ActivityBoxes({participants, court_id, date, c1, c2, organiser, 
             color={useColorModeValue(c1, c2)}
             fontWeight={'500'}
             textTransform={'uppercase'} 
-            mb={'4'}>
+            mb={'4'}
+            onClick={() => navigate("/event/" + event_id)}>
             {theDate}
         </Text>
 
