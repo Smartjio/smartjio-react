@@ -112,7 +112,7 @@ export default function Activities() {
                 </Heading>
                 {thePast.map((event) => {
                     return (
-                        <ActivityBoxes c1='red.500' c2='red.300' date={event.date} court_id={event.court_id} participants={event.attendees} organiser={event.organiser} sport={event.activity}/>
+                        <ActivityBoxes c1='red.500' c2='red.300' event_id={event.docId} date={event.date} court_id={event.court_id} participants={event.attendees} organiser={event.organiser} sport={event.activity}/>
                     )
                 })}
             </Stack>
