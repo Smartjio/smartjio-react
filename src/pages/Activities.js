@@ -98,7 +98,7 @@ export default function Activities() {
 
                 {upcoming.map((event) => {
                     return (
-                        <ActivityBoxes c1='green.500' c2='green.300' date={event.date} court_id={event.court_id} participants={event.attendees} organiser={event.organiser} sport={event.activity}/>
+                        <ActivityBoxes c1='green.500' c2='green.300' event_id={event.docId} date={event.date} court_id={event.court_id} participants={event.attendees} organiser={event.organiser} sport={event.activity}/>
                     )
                 })}
 
