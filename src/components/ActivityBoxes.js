@@ -138,7 +138,6 @@ export function ActivityBoxes({participants, court_id, date, c1, c2, organiser, 
         )
     }
 
-
   return (
     <Box>
         <Text

@@ -381,10 +381,10 @@ export default function TestPage() {
                     ) : (
                         <FormErrorMessage>The venue requested does not exist.</FormErrorMessage>
                     )}
-                    {courtSuggestions && courtSuggestions.map((suggestion, index) => 
-                    <option key={index} value={suggestion} onClick={() => onCourtSuggestHandler(suggestion)}>{suggestion.court_name}</option> // show court name but use the court object.
-                    )}
                 </FormControl>
+                {courtSuggestions && courtSuggestions.map((suggestion, index) => 
+                    <option key={index} value={suggestion} onClick={() => onCourtSuggestHandler(suggestion)}>{suggestion.court_name}</option> // show court name but use the court object.
+                )}
             </Container>
         )
     }
@@ -526,7 +526,8 @@ export default function TestPage() {
 
         const clickToAdd = () => {
             if (!isInvited(text) && isFriend(text)) {
-                setInviteList(inviteList => [...inviteList, holdingCell])
+                setInviteList(inviteList => [...inviteList, holdingCell]);
+                setText("");
             }
         }
         
@@ -678,14 +679,14 @@ export default function TestPage() {
                         Choose Activity and proficiency level
                     </Text>
         
-                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}> 
                         <List spacing={2}>
-                        <ListItem><HStack><Text>Activity Selected:</Text> <ShowSport what={sport} /></HStack></ListItem>
-                        <ListItem><SelectSport /></ListItem>
+                        <ListItem><HStack><Text>Activity Selected: </Text> <Text as='b'> {sport} </Text> <ShowSport what={sport} /></HStack></ListItem>
+                        <SelectSport />
                         </List>
                         <List spacing={2}>
                         <ListItem>Proficiency Level Selected: {levelProf}</ListItem>
-                        <ListItem><SelectLevel /></ListItem>
+                        <SelectLevel />
                         </List>
                     </SimpleGrid>
                     </Box>
