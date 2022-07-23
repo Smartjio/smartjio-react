@@ -346,7 +346,7 @@ export default function TestPage() {
         }
         // console.log("the matches = ", matches);
         setCourtSuggestions(matches); // an array of court objects. 
-        setCourtNameInput(text); // why is this even necessary??? 
+        setCourtNameInput(text);
       }
 
     function SelectCourt() {

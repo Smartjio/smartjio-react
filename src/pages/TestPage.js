@@ -2,9 +2,7 @@ import React from 'react'
 
 export default function TestPage() {
   return (
-    <div>I want to install a system where -> if your activity is up, meaning that tommorrow is the day of your activity, then there will be a 
-        telegram notification sent to you. 
-    </div>
+    <div>TestPage</div>
   )
 }
 
