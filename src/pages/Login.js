@@ -14,6 +14,7 @@ import {
     Text,
     useColorModeValue,
     Link,
+    Alert,
   } from '@chakra-ui/react';
 import { Link as ReactLink, useNavigate } from 'react-router-dom';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
@@ -33,11 +34,30 @@ export default function Login() {
         try {
             await login(emailRef.current.value, passwordRef.current.value)
             navigate("/")
-        } catch {
-            setError('Failed to login')
-            console.log(error)
+        } catch (err) {
+            handleErrorLogin(err);
+            // console.log(err.code);
+            // console.log(err.message);
+            console.log(error);
         }
     }
+
+    function handleErrorLogin(err) {
+        switch (err.code) {
+            case 'auth/invalid-email':
+                setError('Please input a valid email.');
+                break;
+            case 'auth/user-not-found':
+                setError('User not found. Please try again.');
+                break;
+            case 'auth/wrong-password':
+                setError('Incorrect password. Please try again.');
+                break;
+            default:
+                setError(err.message);
+        }
+    }
+
 
     return (
         <Flex
@@ -57,6 +77,7 @@ export default function Login() {
             boxShadow={'lg'}
             p={8}>
             <Stack spacing={4}>
+                {error && <Alert status="error"> {error} </Alert>}
                 <FormControl id="email" isRequired>
                 <FormLabel>Email address</FormLabel>
                 <Input type="email" ref={emailRef}/>

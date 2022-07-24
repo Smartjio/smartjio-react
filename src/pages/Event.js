@@ -1,416 +1,508 @@
-import React, { useState, useEffect } from 'react'
-// import Card from '../components/PlayerCard' // maybe you should name properly
-import { useNavigate, useParams } from 'react-router-dom';
-// import { useAuth } from "../contexts/AuthContext"; // imported useAuth
-// import { async } from "@firebase/util";
-import { db } from "../firebase.js";
-import Avatar from "../components/AvatarRipple"; // displaying of attendees. 
-import NavBar from "../components/NavBar";
-
-import {
-  Box,
-  // Container,
-  // Stack,
-  // Text,
-  Image,
-  // Flex,
-  // VStack,
-  // Button,
-  Heading,
-  // SimpleGrid,
-  // StackDivider,
-  // useColorModeValue,
-  Center,
-  WrapItem,
-  Wrap,
-  OrderedList,
-  ListItem,
-} from '@chakra-ui/react';
-
-// import { FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
-// import { MdLocalShipping } from 'react-icons/md';
-
+import { React, useState, useEffect, /* useCallback */ } from "react";
 import {
   collection,
   getDoc,
-  // updateDoc,
+  updateDoc,
   doc,
-} from "firebase/firestore"; 
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+  addDoc,
+} from "firebase/firestore";
+import { Box, Heading, Image, Flex, Text, Button, Container, /* AspectRatio */
+SimpleGrid, 
+Stack,
+useColorModeValue,
+StackDivider, 
+HStack,
+Avatar,
+Input, 
+Badge,
+InputGroup,
+Alert,
+AlertIcon,
+AlertTitle,
+AlertDescription,
+CloseButton,
+useDisclosure, } from "@chakra-ui/react";
 
-// the order of your functions matter alot. 
+import SportIcon from "../components/SportSVG";
+
+import NavBar from "../components/NavBar";
+import { db } from "../firebase";
+import { useAuth } from "../contexts/AuthContext";
+import { useParams } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+// import AddToCalendarButton from 'react-add-to-calendar';
 
 export default function Event() {
+
+  const [triggerEffect, setTriggerEffect] = useState(false);
+
   const navigate = useNavigate();
-  /* when we arrive at this page from another page, we need to input parameters into this page before we can query the event */
-  // const { currentUser } = useAuth(); // need this for join event function. 
-  // console.log(currentUser);
-  // const myID = currentUser.uid; never fking do this
-  // console.log("current User = ", currentUser.uid);
-  const { eid } = useParams(); // instead of let and var
-  // console.log("event id = ", eid); // working
+  const { eid } = useParams();
+  const { currentUser } = useAuth();
+  const myId = currentUser.uid;
+  const [myEventData, setMyEventData] = useState(''); // everything will take place within this one single object. 
+  const [participants, setParticipants] = useState([]);
+  const [courtData, setCourtData] = useState('');
+  const [organiserData, setOrganiserData] = useState('');
+  const [myFriends, setMyFriends] = useState([]); // for the autosuggestion thing. 
+  const [ date, setDate ] = useState('');
+  const [notifications, setNotifications] = useState([]);
 
-/*   const [courtImage, setCourtImage] = useState("");
-  const [courtRegion, setCourtRegion] = useState("");
-  const [courtName, setCourtName] = useState("");
+  // join / leave event -> rerender on click -> triggerEffect hook.
 
-  const [courtId, setCourtId] = useState(0);
-  const [activity, setActivity] = useState("");
-  const [organiser, setOrganiser] = useState("");
-  const [organiserDoc, setOrganiserDoc] = useState({}); // how to initialize
-  const [eventTime, setEventTime] = useState(""); // just a string for now, will change into Date() object in future
+  const AddToEvent = async (id) => {
+    const EventDoc = doc(db, "events", eid);
+    const tempArray = myEventData.attendees.concat([id]);
+    const newFields = { attendees: tempArray };
+    await updateDoc(EventDoc, newFields);
+    setTriggerEffect(!triggerEffect);
+  };
 
-  const [attendees, setAttendees] = useState([]); // array of UID which will then loop through to create the avatars.
-  const [attendeeDetail, setattendeeDetail] = useState([]); // .map from the above list:  {user_img:"", user_name:"", user_level:""} */
-
-  const [myData, setMyData] = useState('');
-  const [time, setTime] = useState("");
-  // const participants = []; // try using this unhooked version first. 
-  const [participants, setParticipants ]= useState([]);
-  const [courtImg, setCourtImg ]= useState('');
-  const [orgInfo, setOrgInfo] = useState('');
-
-  let tempArray = [] // go through step by step how the whole page should render. 
-
-  useEffect(() => {
-    const getEvent = async () => {
-      const eventsCollectionRef = collection(db, "events");
-      const eventDocRef = doc(eventsCollectionRef, eid); // can just .id? 
-      const eventData = await getDoc(eventDocRef);
-      if (eventData.exists()) {
-        // console.log("query id = ", eventData.data().court_id); // switching this console.log on can actually render more attendees...
-        const data = eventData.data();
-        setMyData(data);
-        checkParticipants(data.attendees);
-        getImg(data.court_id);
-        getOrganiser(data.organiser);
-        // console.log("query id = ", eventData.data().court_id);
-
-        /* setOrganiser(eventData.data().organiser);
-        setCourtId(eventData.data().court_id);
-        setEventTime(eventData.data().time);
-        setActivity(eventData.data().activity);
-        setAttendees(eventData.data().attendees);  */
-        const day = data.date.toDate().getDate();
-        const month = data.date.toDate().getMonth();
-        const year = data.date.toDate().getFullYear();
-        const hour = data.date.toDate().getHours();
-        let min = data.date.toDate().getMinutes().toString();
-        while (min.length < 2) {
-          min = "0" + min;
-        }
-        setTime(day + '/' + month + '/' + year + ' at ' + hour + ":" + min);
-      } else {
-        console.log("error")
-        // navigate('/ErrorNotFound')
-        // if event exists, navigate to error page -> Not working rn.
-      }
-    }; 
-
-    getEvent();
-    // eslint-disable-next-line 
-  }, [eid]);
-
-  // how do we ensure that this occurs only after the first query has occured?
-  // console.log("attendanceList = ", myData.attendees); // is correct
-  // console.log("attendance Data = ", participants); // only seems to be one person but 4x??? 
-  // console.log("tempArray = ", tempArray);
-
-  const checkParticipants = (myList) => {
-    try {
-      myList.forEach(element => {
-        queryParticipants(element);
-      });  
-      setParticipants(tempArray); // not sure why it renders so many x of attendees... should be useEffect rendering. 
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  const queryParticipants = async (person) => {
-    const docRef = doc(collection(db, "users"), person); // can just currentUser.uid -> reading properties of undefined 
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      // tempArray = [...tempArray, docSnap.data()]
-      // tempArray.push(docSnap.data());
-      // setParticipants([...participants, docSnap.data()]);
-      setParticipants(participants => [...participants, docSnap.data()]);
-      setParticipants(participants => [...new Set(participants)]);
-      // console.log("within my loop in queries", docSnap.data());
-      // addPerson(docSnap.data());
+  const DeleteFromEvent = async (id) => {
+    const EventDoc = doc(db, "events", eid);
+    const tempArray = myEventData.attendees.filter(person => person !== id); // removes person. 
+    if (tempArray.length === 0) {
+      navigate("/"); // does order matter here?
+      await deleteDoc(EventDoc);
+      // if there is no one in the event, then the event will cease to exist, person to last leave the event will be rerouted to the dashboard. 
     } else {
-      console.log("error user not found");
+      const newFields = { attendees: tempArray };
+      await updateDoc(EventDoc, newFields);
+      setTriggerEffect(!triggerEffect);
+    }
+  };
+
+  const getParticipants = async (user_id) => {
+    const userDoc = doc(collection(db, "users"), user_id);
+    const myUserDoc = await getDoc(userDoc);
+    if (myUserDoc.exists()) {
+      const temp = {
+            player_name: myUserDoc.data().username,
+            player_image: myUserDoc.data().img,
+            player_level: myUserDoc.data().level,
+            player_id: user_id, // for onclick -> see the other player profile. 
+        };
+        // console.log("participant loop = ", temp)
+        return temp;
+    } else {
+      console.log("Error");
     }
   }
 
-  const getImg = async (courtId) => {
-    try{
-      const imgDocRef = doc(collection(db, "courts"), courtId); // can just .id? 
-      const imgData = await getDoc(imgDocRef);
-      console.log("query img = ", imgData.data()); // not working...
-      setCourtImg(imgData.data().court_image);
-    } catch (error) {
-      console.log(error);
-    }
-  }; 
-
-  // console.log("img data = ", courtImg);
-
-  const getOrganiser = async (userId) => {
-    try {
-      const orgDocRef = doc(collection(db, "users"), userId);
-      const orgData = await getDoc(orgDocRef);
-      console.log("query org = ", orgData.data());
-      setOrgInfo(orgData.data());
-    } catch (error) {
-      console.log(error);
-    }
-  }; 
-
-  // useEffect happens after every render -> keeps adding people to the list... thats why so many extra pieces in your list. 
-  // but without useEffect, myData.forEach runs forever... 
-
-  // console.log(participants[0]); -> var component = function... best to write it within the return of the export default... idk why
-
-  // console.log(myData);
-  // console.log(time);
-
-  async function navigateOrganiser(e) {
-    try {
-      await navigate("/profile/" + myData.organiser);
-    } catch (error) {
-      console.log(error);
+  const getCourt = async (court_id) => {
+    const courtDoc = doc(collection(db, "courts"), court_id);
+    const myCourtDoc = await getDoc(courtDoc);
+    if (myCourtDoc.exists()) {
+      const temp = {
+            court_image: myCourtDoc.data().court_image,
+            court_name: myCourtDoc.data().court_name,
+            court_region: myCourtDoc.data().region,
+            court_id: court_id, // for onclick -> see the court page 
+        };
+        // console.log("court query = ", temp)
+        return temp;
+    } else {
+      console.log("Error");
     }
   }
 
-  return (
-    <div>
-      <NavBar />
-      {/* <Text>{eid}</Text> */}
-      <Image src={courtImg.court_image} />
-      <Heading>Organiser of Event</Heading>
-      <Box onClick={() => navigateOrganiser()}>
-      <Avatar display_picture={orgInfo.img} user_name={orgInfo.username} player_level={orgInfo.level}/>
-      </Box>
-      <OrderedList>
-        <ListItem>activity: {myData.activity}</ListItem>
-        <ListItem>court is: {myData.court_id}</ListItem>
-        <ListItem>organiser ID: {myData.organiser}</ListItem>
-        <ListItem>time: {time}</ListItem>
-      </OrderedList>
-      <Wrap>
-      {participants.map(function(person) {
-    // console.log("inside the loop = ", person); // runs
-    return (
-      <WrapItem key={person} >
-        <Box>
-          <Center>
-            <Avatar display_picture={person.img} user_name={person.username} player_level={person.level} />
-          </Center>
-          {/* <Image src={person.img} />
-          <Heading>player name: {person.username}</Heading>
-          <Heading>player level: {person.level}</Heading> */}
-        </Box>
-      </WrapItem>
-    )
-  })}
-      </Wrap>
-    </div>
-  )
-
-/*   console.log("courtId = ", courtId);
-  console.log("activity = ", activity);
-  console.log("organiser = ", organiser);
-  console.log("eventTime = ", eventTime);
-  console.log("attendees = ", attendees);
-
   useEffect(() => {
-    const getPeople = async () => { 
-      attendees.map(person => async () => {
-        try {
-          const userCollectionRef = collection(db, "users");
-          const userDocRef = doc(userCollectionRef, person); // user id => username, photo, level
-          const userData = await getDoc(userDocRef);
-          if (userData.exists()) {
-            setattendeeDetail(attendeeDetail.push({user_img:userData.data().img, user_name:userData.data().username, user_level:userData.data().level}))
-          } else {
-            console.log("error");
-          }
-        } catch(error) {
-          console.log(error);
-          navigate('/ErrorNotFound');
-        }
-    })
-    }; 
-    getPeople();
-    console.log(attendeeDetail);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  console.log("attendeeDetail = ", attendeeDetail);
-
-  useEffect(() => {
-    const getCourt = async () => {
-      const courtsCollectionRef = collection(db, "courts");
-      const courtsDocRef = doc(courtsCollectionRef, courtId); // get court details
-      const courtData = await getDoc(courtsDocRef);
-      // if event exists, then court must definitely exist already.
-      if (courtData.exists()) {
-        setCourtImage(courtData.data().court_image);
-        setCourtRegion(courtData.data().region);
-        setCourtName(courtData.data().court_name);
-      } else {
-        navigate('/ErrorNotFound')
-      }
-    };
-    getCourt();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  console.log("court image = ", courtImage);
-  console.log("region = ", courtRegion);
-  console.log("name of court = ", courtName);
-
-  var attendanceAvatars = attendees.map(function(person) {
-    return (
-      <WrapItem key={person}>
-        <Box>
-          <Center>
-            <Avatar display_picture={person.user_img} user_name={person.user_name} player_level={person.user_level}/>
-          </Center>
-        </Box>
-      </WrapItem>
-    )
-  })
-
-  useEffect(() => {
-    const getOrganiserDetails = async () => {
-      const organiserCollectionRef = collection(db, "users");
-      const organiserDocRef = doc(organiserCollectionRef, organiser); // get court details
-      const organiserData = await getDoc(organiserDocRef);
-      if (organiserData.exists()) {
-        setOrganiserDoc({user_img:organiserData.data().img, user_name:organiserData.data().username, user_level:organiserData.data().level})
+    const getFriendDoc = async () => {
+      const userDocRef = doc(collection(db, "users"), myId); 
+      const userData = await getDoc(userDocRef);
+      if (userData.exists()) {
+        const tempArray = userData.data().friends.map((person) => getParticipants(person));
+        const promiseSolver = Promise.all(tempArray).then((values) => {
+          return values;
+        });
+        const theArray = await promiseSolver;
+        console.log("all my friends = ", theArray)
+        setMyFriends(theArray)
       } else {
         console.log("error");
       }
+    };
+    getFriendDoc();
+  }, [myId]);
+
+  useEffect(() => {
+    const getEventDoc = async () => {
+      const eventDocRef = doc(collection(db, "events"), eid); 
+      const eventData = await getDoc(eventDocRef);
+      if (eventData.exists()) {
+        setMyEventData(eventData.data());
+
+        const day = eventData.data().date.toDate().getDate();
+        const month = eventData.data().date.toDate().getMonth() + 1;
+        const year = eventData.data().date.toDate().getFullYear();
+        const hour = eventData.data().date.toDate().getHours();
+        let min = eventData.data().date.toDate().getMinutes().toString();
+        while (min.length < 2) {
+          min = "0" + min;
+        }
+        setDate(day + '/' + month + '/' + year + ' at ' + hour + ":" + min); // use date object state hook to display later.
+        
+        const tempArray = eventData.data().attendees.map((person) => getParticipants(person));
+        const promiseSolver = Promise.all(tempArray).then((values) => {
+          return values;
+        });
+        const theArray = await promiseSolver;
+        // console.log("theArray is = ", theArray);
+        setParticipants(theArray);
+        setCourtData(await getCourt(eventData.data().court_id)); // still needed that await there. 
+        setOrganiserData(await getParticipants(eventData.data().organiser));
+      } else {
+        console.log("error");
+      }
+    };
+    getEventDoc();
+  }, [eid, triggerEffect]);
+  // cannot add the addToevent and deletefromevent into the dependency array -> use triggerEffect hook.
+
+  // console.log("all details = ", myEventData, participants, courtData);
+
+  function MeInEvent() {
+    if (myEventData.attendees === undefined) {
+      // console.log("still waiting for your useEffects to render");
+    } else {
+      if (myEventData.attendees.includes(myId)) {
+        return (
+          // <Text> HUAT AH </Text>
+          true
+        );
+      } else {
+        return (
+          // <Text> means i not inside this event lah. </Text>
+          false
+        );
+      }
     }
-    // to deal with the useEffect missing dependency issue, put useState within useEffect or use eslinter diable comment. 
-    getOrganiserDetails();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }
 
-  console.log("organiserDoc = ", organiserDoc);
-
-  // display_picture, user_name, player_level
-
-  var theOrganiser = <Card playerName={organiserDoc.user_name} level={organiserDoc.user_level} IMAGE={organiserDoc.user_img} />
-
-  const joinEvent = async (id, attendanceList) => {
-    // id is the event id.
-    const eventDoc = doc(db, "events", id);
-    const newFields = {attendanceList: attendanceList.push(currentUser.uid)}; // adding currentUser into the attendance list.
-    await updateDoc(eventDoc, newFields);
+  const createEventInvitation = async (friend_id) => {
+    await addDoc(collection(db, "notification"), { event_id: eid, recipient: friend_id, sender: myId });
   };
+
+  const whichBadgeColour = (user_id, index) => {
+    if (index > myEventData.event_limit) {
+      return "pink"
+      // take note to update all to event_limit: you can still join when participants are over the limit, just displayed pink.
+    } else {
+      if (user_id === myId) {
+        return "yellow";
+      } else {
+        return "green";
+      }
+    }
+  };
+
+  function OneParticipant(props) {
+    return ( props.player_id === myEventData.organiser ?
+      <HStack></HStack>
+    : 
+    <Flex align="center" >
+      <Avatar src={props.player_image} name={props.player_name} size='lg' 
+        onClick={async (event) => {
+                            try {
+                            await navigate("/profile/" + props.player_id);
+                            } catch (error) {
+                            console.log(error);
+                            }
+                        }}/>
+      <Box ml='3' alignItems=''>
+        <Text fontWeight='bold'>
+        {props.player_name}
+          <Badge ml='1' colorScheme={whichBadgeColour(props.player_id, props.index)}>
+          {props.player_level}
+          </Badge>
+        </Text>
+      </Box>
+    </Flex>
+    // basically dont return anything if participant = organiser
+    )
+  }
+
+  // this function goes through the participants loop.
+  function ViewParticipants() {
+    return (
+      <Stack
+      spacing={4}
+      divider={
+        <StackDivider
+          borderColor={useColorModeValue('gray.100', 'gray.700')}
+        />
+      }>
+      {participants.map((elem, idx) => {
+        return (<OneParticipant key={elem.player_id} index={idx} player_image={elem.player_image} player_name={elem.player_name} player_level={elem.player_level} player_id={elem.player_id}/> )
+      })}
+    </Stack>
+    )
+  }
+
+  // include a search friend bar to invite your friends with autosuggestion to select!!!!
+
+  // why everytime i refresh then i will be inside the event??? 
+  const [text, setText] = useState('');
+  const [suggestions, setSuggestions] = useState([]); // wtf is initialState? 
+
+  const onSuggestHandler = (text) => {
+    setText(text.player_name);
+    setSuggestions([]); // to remove the suggestions after selection
+  }
+
+  const onChangeHandler = (text) => {
+    let matches = [];
+    if (text.length > 0) {
+      matches = myFriends.filter(usr => {
+        const regex = new RegExp(`${text}`, "gi");
+        return usr.player_name.match(regex);
+      })
+      // matches = temp.filter(participants.forEach()) // let the Enter button handle the logic of not inviting the people already in this event.
+    }
+    // console.log("the matches = ", matches);
+    setSuggestions(matches); // should be friend user objects. 
+    setText(text);
+  }
+
+  // need to query first before anything.
+  useEffect(() => {
+    const notInvitedYet = async () => {
+      const tempArray = [];
+      try {
+        const myQuery = query(
+          collection(db, "notification"),
+          where("event_id", "==", eid),
+        );
+        const queryResults = await getDocs(myQuery); // will this ever be empty
+        // console.log("checking who has been invited", queryResults);
+        queryResults.forEach((doc) => {
+          const tempObject = doc.data()
+          tempObject.docId = doc.id;
+          tempArray.push(tempObject);
+        });
+        setNotifications(tempArray);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    notInvitedYet();
+  }, [text, eid, triggerEffect]); // rerun everytime we click! createEventInvitation, and triggerEffect!
+
+  function JoinEventButton() {
+    // let invitationStatus = false;
+    // let showText = '';
+    // console.log("query result = ", notifications);
+    const {
+      isOpen: isVisible,
+      onClose,
+      onOpen,
+    } = useDisclosure({ defaultIsOpen: false })
+
+    // might need to be async
+    const onClickJioFriend = (friend_username) => {
+      if (friend_username !== "") {
+        const jioFriend = myFriends.find((person) => person.player_name === friend_username); // find the first instance of this dude
+        const tempArray = participants.filter((friend_obj) => friend_obj.player_name === friend_username);
+        if (tempArray.length === 0) {
+          // if friend is not already inside of this event, we need to add him to the event.
+          if (notifications.filter((notif) => notif.recipient === jioFriend.player_id).length === 0) {
+            createEventInvitation(jioFriend.player_id);
+            // showText = text;
+            // setText(''); // empty
+            // invitationStatus = true;
+            onOpen();
+          } else {
+            // invitationStatus = false;
+            // showText = text;
+            // setText(''); // empty
+            onOpen();
+          }
+        } else {
+          onOpen();
+        }
+      }
+    }
+
+    const improvedClose = () => {
+      onClose();
+      setTriggerEffect(!triggerEffect);
+    }
+
+  
+    return isVisible ? (
+      (participants.filter((friend_obj) => friend_obj.player_name === text).length === 0) ?
+        (notifications.filter((notif) => notif.recipient === myFriends.find((person) => person.player_name === text).player_id).length === 0) ?
+        <Alert status='success'>
+          <AlertIcon />
+          <Box>
+            <AlertTitle>{text} has been Invited!</AlertTitle>
+            <AlertDescription>
+              Please wait for your friend to accept the event invitation.
+            </AlertDescription>
+          </Box>
+          <CloseButton
+            alignSelf='flex-start'
+            position='relative'
+            right={-1}
+            top={-1}
+            onClick={improvedClose}
+          />
+        </Alert>
+        :
+        <Alert status='error'>
+          <AlertIcon />
+          <Box>
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              {text} has already been sent an invite.
+            </AlertDescription>
+          </Box>
+          <CloseButton
+            alignSelf='flex-start'
+            position='relative'
+            right={-1}
+            top={-1}
+            onClick={improvedClose}
+          />
+        </Alert>
+      :
+      <Alert status='error'>
+        <AlertIcon />
+        <Box>
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            {text} is already part of the event. 
+          </AlertDescription>
+        </Box>
+        <CloseButton
+          alignSelf='flex-start'
+          position='relative'
+          right={-1}
+          top={-1}
+          onClick={improvedClose}
+        />
+      </Alert>
+    ) : (
+      <Button size='lg' onClick={() => onClickJioFriend(text)} >Enter</Button>
+      // <Button onClick={onOpen}>Show Alert</Button>
+    )
+  }
+
+  function RightBottomPage() {
+    // make it such that onClick -> the screen refreshes.
+    return ( MeInEvent() ?
+      // if you are in the event, show a leave button -> can invite friends to the event, if they are inside of the event, then alert showing error will show, else, show invited
+      <Stack spacing={4}>
+        <Heading as='h4' size='md'>
+          Invite Friends to event
+        </Heading>
+        <InputGroup>
+          <Input variant='filled' placeholder='Invite Friends' size='lg' value={text} onChange={e => onChangeHandler(e.target.value)}  /* className="col-md-12 input" */ />
+          <JoinEventButton />
+          {/* <Button size='lg' onClick={() => onClickJioFriend(text)} >Enter</Button> */}
+        </InputGroup>
+        {suggestions && suggestions.map((suggestion, index) => 
+          <option key={index} value={suggestion} onClick={() => onSuggestHandler(suggestion)}>{suggestion.player_name}</option> // value here doesnt rly matter
+          // <div key={index} value={suggestion} onClick={() => onSuggestHandler(suggestion.player_name)}>{suggestion.player_name}</div>
+        )}
+
+        <Flex align="bottom" justify="right">
+          <Button colorScheme='red' variant='outline' size='lg' onClick={() => DeleteFromEvent(myId)}>Leave</Button>
+        </Flex>
+      </Stack>
+      : 
+      // else, show a join button instead. 
+      <Flex align="center" justify="center">
+        <Button colorScheme='blue' variant='solid' size='lg' onClick={() => AddToEvent(myId)}>Join</Button>
+      </Flex>
+    )
+  }
 
   return (
     <div>
       <NavBar />
-      <Heading> {courtName}  </Heading>
-      <Image>{courtImage}</Image>
-       <Container maxW={'7xl'}>
-        <SimpleGrid
-          columns={{ base: 1, lg: 2 }}
-          spacing={{ base: 8, md: 10 }}
-          py={{ base: 18, md: 24 }}>
-          <Flex>
-            <Image
-              rounded={'md'}
-              alt={'Court image'}
-              src={
-                courtImage
-              }
-              fit={'cover'}
-              align={'center'}
-              w={'100%'}
-              h={{ base: '100%', sm: '400px', lg: '500px' }}
-            />
-          </Flex>
-          <Stack spacing={{ base: 6, md: 10 }}>
-            <Box as={'header'}>
-              <Heading
-                lineHeight={1.1}
-                fontWeight={600}
-                fontSize={{ base: '2xl', sm: '4xl', lg: '5xl' }}>
-                {activity}
-              </Heading>
-              <Text
-                color={useColorModeValue('gray.900', 'gray.400')}
-                fontWeight={300}
-                fontSize={'2xl'}>
-                {courtRegion}
-              </Text>
-            </Box>
-  
-            <Stack
-              spacing={{ base: 4, sm: 6 }}
-              direction={'column'}
-              divider={
-                <StackDivider
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
-                />
-              }>
-              <VStack spacing={{ base: 4, sm: 6 }}>
-                 <Text
-                  color={useColorModeValue('gray.500', 'gray.400')}
-                  fontSize={'2xl'}
-                  fontWeight={'300'}>
-                  {props.comments}
-                </Text> 
-                <Text fontSize={'lg'}>
-                  {/* Date: {props.date} }
-                  Time: {eventTime}
-                </Text>
-
-                <Wrap justify={'center'} spacing={'50px'}>
-                {attendanceAvatars}
-                </Wrap>
-
-                <Box>
-                <Text
-                  fontSize={{ base: '16px', lg: '18px' }}
-                  color={useColorModeValue('yellow.500', 'yellow.300')}
-                  fontWeight={'500'}
-                  textTransform={'uppercase'}
-                  mb={'4'}>
-                  Event Organiser
-                </Text>
-                {theOrganiser}
-              
-              </Box>
-              </VStack>
-  
-            </Stack>
-  
-            <Button
-              rounded={'none'}
-              w={'full'}
-              mt={8}
-              size={'lg'}
-              py={'7'}
-              bg={useColorModeValue('gray.900', 'gray.50')}
-              color={useColorModeValue('white', 'gray.900')}
+      <Container maxW={'5xl'} py={8} px={4}>
+      <SimpleGrid columns={{ base: 2, md: 2 }} spacing={10}>
+        <Stack spacing={4}>
+          <HStack>
+            <Text
               textTransform={'uppercase'}
-              _hover={{
-                transform: 'translateY(2px)',
-                boxShadow: 'lg',
-                
-              }}
-              onClick={() => joinEvent(eid, attendees)} >
-              Join event: onClick, adds yourself to the event!
-            </Button>
-          </Stack>
-        </SimpleGrid>
-      </Container> 
-    </div>
+              color={'blue.200'}
+              fontWeight={600}
+              fontSize={'sm'}
+              bg={useColorModeValue('blue.50', 'blue.900')}
+              p={2}
+              alignSelf={'flex-start'}
+              rounded={'md'}>
+              {myEventData.activity}
+            </Text>
+            <SportIcon what={myEventData.activity} />
+          </HStack>
 
-  ) */
+          <Heading>
+            {courtData.court_name}
+          </Heading>
+          <Text color={'gray.500'} fontSize={'lg'}>
+            {courtData.court_region} side event happening on {date}
+          </Text>
+          <Flex align="center" justify="center">
+            <Avatar src={organiserData.player_image} size='xl'/>
+            <Box ml='5'>
+              <Text fontWeight='bold' fontSize='xl'>
+              {organiserData.player_name}
+                <Badge ml='1' colorScheme='purple'>
+                  Organiser
+                </Badge>
+              </Text>
+              <Text fontSize='sm'>{organiserData.player_level}</Text>
+            </Box>
+          </Flex>
+          {/* <HStack>
+            <Avatar src={organiserData.player_image} size='2xl'>
+             <AvatarBadge boxSize='1.25em' bg='green.500' /> 
+            </Avatar>
+            <VStack spacing={-1}>
+              <Text>{organiserData.player_name}</Text>
+                <Text>level : {organiserData.player_level}</Text>
+            </VStack>
+          </HStack> */}
+          <Stack
+            spacing={4}
+            divider={
+              <StackDivider
+                borderColor={useColorModeValue('gray.100', 'gray.700')}
+              />
+            }>
+              {/* include your attendees here possibly.  */}
+          </Stack>
+        </Stack>
+        <Flex>
+          <Image
+            rounded={'md'}
+            alt={'feature image'}
+            src={
+              courtData.court_image
+            }
+            objectFit={'cover'}
+            onClick={async (event) => {
+              try {
+              await navigate("/court/" + courtData.court_id); // click on court image -> go to court page.
+              } catch (error) {
+              console.log(error);
+              }
+            }}/>
+        </Flex>
+        {/* below here can add participants and the add button respectively */}
+        <ViewParticipants />
+
+          <RightBottomPage />
+
+      </SimpleGrid>
+    </Container>
+    </div>
+  )
 }

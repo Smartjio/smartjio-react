@@ -29,7 +29,7 @@ export default function EventCard(props) {
                 const data = eventDocSnap.data();
                 setActivity(data.activity);
                 const day = data.date.toDate().getDate();
-                const month = data.date.toDate().getMonth();
+                const month = data.date.toDate().getMonth() + 1;
                 const year = data.date.toDate().getFullYear();
                 const hour = data.date.toDate().getHours();
                 let min = data.date.toDate().getMinutes().toString();
