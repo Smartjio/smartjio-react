@@ -137,7 +137,7 @@ export default function Event() {
         setMyEventData(eventData.data());
 
         const day = eventData.data().date.toDate().getDate();
-        const month = eventData.data().date.toDate().getMonth();
+        const month = eventData.data().date.toDate().getMonth() + 1;
         const year = eventData.data().date.toDate().getFullYear();
         const hour = eventData.data().date.toDate().getHours();
         let min = eventData.data().date.toDate().getMinutes().toString();
