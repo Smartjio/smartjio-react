@@ -21,7 +21,7 @@ import {
   } from '@chakra-ui/react';
 
 export default function ProfileCreation() {
-    const { currentUser } = useAuth();
+    const { currentUser, setUserData } = useAuth();
 
     const [url, setUrl] = useState("")
     const [img, setImg] = useState("")
@@ -93,6 +93,8 @@ export default function ProfileCreation() {
         } 
         try {
             await setDoc(doc(db, "users", currentUser.uid), data);
+            setUserData(data);
+            // console.log(userData);
             navigate("/")
         } catch {
             setError("Failed to create profile")
